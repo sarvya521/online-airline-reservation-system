@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: bootstrap
+aws:
+  paramstore:
+    enabled: true
+    prefix: /${ENV_NAME}
+    failFast: true
+    name: bootstrap

@@ -1,0 +1,20 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+springboot-boilerplate,com.backend.boilerplate.web.controller,GlobalInitBinderHandler,13,0,0,0,4,0,2,0,2,0
+springboot-boilerplate,com.backend.boilerplate.web.controller,ClaimController,16,0,0,0,3,0,2,0,2,0
+springboot-boilerplate,com.backend.boilerplate.web.controller,RoleController,58,0,0,0,9,0,5,0,5,0
+springboot-boilerplate,com.backend.boilerplate.web.controller,UserController,77,0,0,0,11,0,6,0,6,0
+springboot-boilerplate,com.backend.boilerplate.web.controller,CommonSuccessfulResponseAdvice,26,0,2,0,5,0,4,0,3,0
+springboot-boilerplate,com.backend.boilerplate.util,ErrorGenerator,55,0,0,0,12,0,6,0,6,0
+springboot-boilerplate,com.backend.boilerplate.util,FunctionalReadWriteLock,57,0,0,0,20,0,6,0,6,0
+springboot-boilerplate,com.backend.boilerplate.util,ErrorGeneratorInitializer,10,0,0,0,4,0,3,0,3,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,RoleServiceImpl.new TransactionCallbackWithoutResult() {...},76,0,4,0,15,0,4,0,2,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,RoleServiceImpl.new TransactionCallbackWithoutResult() {...},69,0,0,0,13,0,3,0,3,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,UserServiceImpl,271,0,2,0,57,0,13,0,12,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,ClaimServiceImpl,18,0,0,0,5,0,2,0,2,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,RoleServiceImpl.new TransactionCallbackWithoutResult() {...},55,0,0,0,12,0,2,0,2,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,RoleServiceImpl,289,0,6,0,64,0,16,0,13,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,UserPaginationServiceImpl,191,0,12,0,37,0,17,0,11,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,AbstractPaginationService,115,0,8,0,25,0,10,0,6,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,UserServiceImpl.new TransactionCallbackWithoutResult() {...},77,0,0,0,15,0,3,0,3,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,UserServiceImpl.new TransactionCallbackWithoutResult() {...},63,0,0,0,14,0,2,0,2,0
+springboot-boilerplate,com.backend.boilerplate.service.impl,UserServiceImpl.new TransactionCallbackWithoutResult() {...},84,0,4,0,17,0,4,0,2,0

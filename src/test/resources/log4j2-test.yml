@@ -1,0 +1,26 @@
+Configuration:
+  status: INFO
+  appenders:
+    Console:
+      - name: Console-Appender
+        PatternLayout:
+          Pattern: '[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}- %msg%n'
+      - name: Masked-Console-Appender
+        PatternLayout:
+          Pattern: '[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1}- %spi%n'
+  Loggers:
+    logger:
+      - name: com.backend.boilerplate
+        level: INFO
+        additivity: false
+        AppenderRef:
+          - ref: Masked-Console-Appender
+      - name: org.springframework.web
+        level: INFO
+        additivity: false
+        AppenderRef:
+          - ref: Masked-Console-Appender
+    Root:
+      level: INFO
+      AppenderRef:
+        - ref: Masked-Console-Appender
