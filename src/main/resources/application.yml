@@ -2,6 +2,11 @@
 spring:
   application:
     name: oars
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+      staticPathPattern: /resources/**
   datasource:
     url: jdbc:mysql://localhost:3306/oars
     username: root
