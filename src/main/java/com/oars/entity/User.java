@@ -33,14 +33,8 @@ import java.util.UUID;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
-/**
- * @author sarvesh
- * @version 0.0.2
- * @since 0.0.1
- */
 @Entity
 @Table(name = "app_user")
-@TypeDef(name = "Status", typeClass = PostgreSQLEnumType.class)
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id"})
@@ -50,28 +44,14 @@ import static javax.persistence.GenerationType.IDENTITY;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "id", columnDefinition = "SERIAL")
+    @Column(name = "id")
     private Long id;
-
-    @Column(name = "uuid", nullable = false, unique = true)
-    private UUID uuid;
-
-    @Enumerated(EnumType.STRING)
-    @Type(type = "Status")
-    @Column(name = "status", columnDefinition = "Status", nullable = false)
-    private Status status;
-
-    @Column(name = "performed_by", nullable = false)
-    private Long performedBy;
-
-    @Generated(GenerationTime.ALWAYS)
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "ts", columnDefinition = "TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP", nullable = false,
-        insertable = false, updatable = false)
-    private Date timestamp;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Column(name = "f_name", nullable = false)
     private String firstName;

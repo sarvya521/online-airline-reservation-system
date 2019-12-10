@@ -4,28 +4,17 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.util.Date;
 
-/**
- * @author sarvesh
- * @version 0.0.2
- * @since 0.0.1
- */
 @Entity
 @Table(name = "user_role")
 @AssociationOverride(name = "id.user",
@@ -53,19 +42,9 @@ public class UserRole implements Serializable {
     @EmbeddedId
     private UserRoleId id = new UserRoleId();
 
-    @Column(name = "performed_by", nullable = false)
-    private Long performedBy;
-
-    @Generated(GenerationTime.ALWAYS)
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "ts", columnDefinition = "TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP", nullable = false,
-        insertable = false, updatable = false)
-    private Date timestamp;
-
     public UserRole(User user, Role role, Long performedBy) {
         setUser(user);
         setRole(role);
-        setPerformedBy(performedBy);
     }
 
     public void setUser(User user) {
