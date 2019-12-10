@@ -1,5 +1,7 @@
 # Includes all common properties irrespective of any environment
 spring:
+  application:
+    name: oars
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
@@ -26,12 +28,6 @@ spring:
             non_contextual_creation: true
     database-platform: org.hibernate.dialect.PostgreSQL95Dialect
     open-in-view: false
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-    table: flyway_schema_history_boilerplate
-    baseline-on-migrate: true
-    baseline-version: "0"
   jackson:
     serialization:
       INDENT_OUTPUT: true
@@ -71,8 +67,6 @@ spring:
 
 supportedLocales:
   - en_US
-  - es
-  - fr
 #i18n settings end here
 ---
 sort:
