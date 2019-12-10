@@ -11,11 +11,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
+
 @Component
 public class UniqueRoleValidator implements ConstraintValidator<UniqueResource, UpdateRoleDto> {
 

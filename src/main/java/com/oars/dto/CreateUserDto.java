@@ -1,10 +1,10 @@
 package com.oars.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.oars.dto.validator.Extended;
 import com.oars.dto.validator.UniqueField;
 import com.oars.dto.validator.UniqueUserEmailValidator;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,11 +13,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
+
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY, content = JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"firstName", "lastName", "email", "roles"})
 @Data

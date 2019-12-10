@@ -8,11 +8,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Optional;
 
-/**
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
+
 @Component
 public class UniqueUserEmailValidator implements ConstraintValidator<UniqueField, String> {
 

@@ -7,11 +7,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.ConstraintValidatorFactory;
 
-/**
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
+
 @Component
 public class UniqueFieldValidator implements ConstraintValidator<UniqueField, Object> {
 

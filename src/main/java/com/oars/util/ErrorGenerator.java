@@ -5,11 +5,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 
-/**
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
 public final class ErrorGenerator {
 
     private static final String DEFAULT_MESSAGE = "Unkwon error. Please contact support";

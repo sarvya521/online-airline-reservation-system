@@ -7,11 +7,7 @@ import org.springframework.validation.beanvalidation.SpringConstraintValidatorFa
 
 import javax.validation.ConstraintValidatorFactory;
 
-/**
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
+
 @Configuration
 public class ValidatorConfiguration {
 

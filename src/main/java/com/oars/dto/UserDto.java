@@ -10,11 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
+
 @JsonInclude(value = JsonInclude.Include.NON_EMPTY, content = JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"uuid", "firstName", "middleName", "lastName", "email", "salutation", "roles", "tenants"})
 @Data

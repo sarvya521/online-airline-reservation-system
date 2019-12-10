@@ -11,11 +11,7 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/**
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
+
 @Target({FIELD})
 @Retention(RUNTIME)
 @Constraint(validatedBy = {UniqueFieldValidator.class})

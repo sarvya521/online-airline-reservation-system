@@ -24,14 +24,14 @@ import javax.validation.ConstraintViolationException;
  */
 @Log4j2
 @RestControllerAdvice
-public class UserManagementExceptionHandler extends CommonResponseEntityExceptionHandler {
+public class OarsExceptionHandler extends CommonResponseEntityExceptionHandler {
 
     @SuppressWarnings({"rawtypes"})
     @ExceptionHandler({DataIntegrityViolationException.class})
     public final ResponseEntity<Response> handleDataIntegrityViolationException(DataIntegrityViolationException dex,
                                                                                 WebRequest request) {
         Response<Void> errorResponse = new Response<Void>(Status.CLIENT_ERROR, HttpStatus.BAD_REQUEST.value(),
-            ErrorGenerator.generateForCode("1000"));
+                ErrorGenerator.generateForCode("1000"));
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
