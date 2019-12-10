@@ -3,10 +3,10 @@ spring:
   application:
     name: oars
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
-    driverClassName: org.postgresql.Driver
+    url: jdbc:mysql://localhost:3306/oars
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
     hikari:
       minimumIdle: 2
       maximumPoolSize: 4
@@ -26,7 +26,7 @@ spring:
         jdbc:
           lob: # Workaround for a compatibility issue of Spring Boot 2 with Hibernate and Postgres Driver. See https://github.com/spring-projects/spring-boot/issues/12007
             non_contextual_creation: true
-    database-platform: org.hibernate.dialect.PostgreSQL95Dialect
+    database-platform: org.hibernate.dialect.MySQL5Dialect
     open-in-view: false
   jackson:
     serialization:
