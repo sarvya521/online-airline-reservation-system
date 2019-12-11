@@ -55,6 +55,19 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
+        <!-- JSTL tag lib -->
+        <dependency>
+            <groupId>javax.servlet.jsp.jstl</groupId>
+            <artifactId>javax.servlet.jsp.jstl-api</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
         <!-- dependencies for actuator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

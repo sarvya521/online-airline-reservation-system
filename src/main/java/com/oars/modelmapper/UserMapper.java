@@ -1,7 +1,5 @@
 package com.oars.modelmapper;
 
-import com.oars.dto.CreateUserDto;
-import com.oars.dto.UpdateUserDto;
 import com.oars.dto.UserDto;
 import com.oars.entity.User;
 import org.modelmapper.ModelMapper;
@@ -44,25 +42,4 @@ public class UserMapper {
     public void mergeToEntity(UserDto userDto, User user) {
         modelMapper.map(userDto, user);
     }
-
-    /**
-     * Convert {@link CreateUserDto} entity to {@link UserDto }
-     *
-     * @param createUserDto
-     * @return {@link UserDto }
-     */
-    public UserDto convertToDto(CreateUserDto createUserDto) {
-        return modelMapper.map(createUserDto, UserDto.class);
-    }
-
-    /**
-     * Convert {@link UpdateUserDto} entity to {@link UserDto }
-     *
-     * @param updateUserDto
-     * @return {@link UserDto }
-     */
-    public UserDto convertToDto(UpdateUserDto updateUserDto) {
-        return modelMapper.map(updateUserDto, UserDto.class);
-    }
-
 }

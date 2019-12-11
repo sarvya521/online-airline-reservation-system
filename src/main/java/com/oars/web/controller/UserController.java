@@ -1,130 +1,77 @@
 package com.oars.web.controller;
 
-import com.oars.constant.Status;
-import com.oars.dto.CreateUserDto;
-import com.oars.dto.Response;
-import com.oars.dto.UpdateUserDto;
 import com.oars.dto.UserDto;
-import com.oars.dto.UserPageDto;
-import com.oars.dto.validator.Exist;
-import com.oars.dto.validator.ExistUserValidator;
-import com.oars.dto.validator.OwConstraintSequence;
-import com.oars.entity.User;
-import com.oars.service.PaginationService;
 import com.oars.service.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Example;
-import io.swagger.annotations.ExampleProperty;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-/**
- * Bundles all CRUD APIs for User.
- *
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
-@Api(tags = "User CRUD API")
-@RestController
-@RequestMapping("/api/v1/user")
-@Validated
+@Log4j2
+@Controller
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @Autowired
-    @Qualifier("UserPaginationService")
-    private PaginationService<User, UserPageDto> userPaginationService;
-
-    /**
-     * @return Response<UserPageDto>
-     * @since 0.0.1
-     */
-    @ApiOperation(value = "Get a current page of list of Users", produces = "application/json")
-    @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Successfully retrieved the list of users", examples = @Example(value =
-        @ExampleProperty(value = "", mediaType = "application/json"))),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")})
-    @GetMapping
-    public Response<UserPageDto> getUsers(
-        @RequestParam(required = false, value = "pageNo") Integer pageNo,
-        @RequestParam(required = false, value = "pageSize") Integer pageSize,
-        @RequestParam(required = false, value = "sortBy") String sortBy,
-        @RequestParam(required = false, defaultValue = "true", value = "asc") boolean asc) {
-        UserPageDto userPage = userPaginationService.getPageDto(pageNo, pageSize, sortBy, asc);
-        return new Response<>(Status.SUCCESS, HttpStatus.OK.value(), userPage);
-    }
-
-    @ApiOperation(value = "Get an User by UUID", produces = "application/json")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully retrieved the user details"),
-        @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
-        @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
-        @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")})
-    @GetMapping("/{uuid}")
-    public Response<UserDto> getUserByUuid(
-        @ApiParam(value = "User id from which user object will retrieve", example = "3275ae93-97c1-4181-b96d" +
-            "-4d4e1e507a3b", required = true) @PathVariable(value = "uuid") UUID uuid) {
-        UserDto user = userService.getUserByUuid(uuid);
-        return new Response<>(Status.SUCCESS, HttpStatus.OK.value(), user);
-    }
-
-    @ApiOperation(value = "Create an User", produces = "application/json")
-    @ApiResponses(value = {
-        @ApiResponse(code = 201, message = "User created successfully"),
-        @ApiResponse(code = 401, message = "You are not authorized to perform this action on the resource")
-    })
     @PostMapping
-    public Response<UserDto> createUser(
-        @ApiParam(value = "user object store in database table", required = true)
-        @RequestBody @Validated(OwConstraintSequence.class) CreateUserDto createUserDto) {
-        UserDto userDto = userService.createUser(createUserDto);
-        return new Response<>(Status.SUCCESS, HttpStatus.CREATED.value(), userDto);
+    public ModelAndView createUser(HttpServletRequest request, HttpServletResponse res) {
+        String email = request.getParameter("emailAddress");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+        UserDto userDto = new UserDto();
+        userDto.setEmail(email);
+        userDto.setFirstName(firstName);
+        userDto.setLastName(lastName);
+        userDto.setPassword(password);
+        userDto.setRole(role);
+
+        boolean ifUserExists = userService.checkIfUserExists(userDto.getEmail());
+        if (ifUserExists) {
+            String message = email + " already exists";
+            return new ModelAndView("unsuccessfulRegistration", "message", message);
+        } else {
+            userService.createUser(userDto);
+            log.info("user created successfully");
+            return new ModelAndView("homepage", "message", "user created successfully!");
+        }
     }
 
-    @ApiOperation(value = "Update an User", produces = "application/json")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "User updated successfully"),
-        @ApiResponse(code = 401, message = "You are not authorized to perform this action on the resource"),
-        @ApiResponse(code = 404, message = "The resource you were trying to update is not found")})
     @PutMapping
-    public Response<UserDto> updateUser(
-        @ApiParam(value = "Update user object", required = true)
-        @RequestBody @Validated(OwConstraintSequence.class) UpdateUserDto updateUserDto) {
-        UserDto userDto = userService.updateUser(updateUserDto);
-        return new Response<>(Status.SUCCESS, HttpStatus.OK.value(), userDto);
+    public ModelAndView updateUser(HttpServletRequest request, HttpServletResponse res) {
+        Long userId = Long.parseLong(request.getParameter("userId"));
+        String email = request.getParameter("emailAddress");
+        String firstName = request.getParameter("firstName");
+        String lastName = request.getParameter("lastName");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+        UserDto userDto = new UserDto();
+        userDto.setId(userId);
+        userDto.setEmail(email);
+        userDto.setFirstName(firstName);
+        userDto.setLastName(lastName);
+        userDto.setPassword(password);
+        userDto.setRole(role);
+
+        userService.updateUser(userDto);
+        log.info("user updated successfully");
+        return new ModelAndView("homepage", "message", "user updated successfully!");
     }
 
-    @SuppressWarnings("rawtypes")
-    @ApiOperation(value = "Delete an User", produces = "application/json")
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "User deleted successfully"),
-        @ApiResponse(code = 401, message = "You are not authorized to perform this action on the resource"),
-        @ApiResponse(code = 404, message = "The resource you were trying to delete is not found")})
-    @DeleteMapping("/{uuid}")
-    public Response deleteUser(
-        @ApiParam(value = "User Id from which user object will delete from database table", example = "3275ae93-97c1" +
-            "-4181-b96d-4d4e1e507a3b", required = true) @PathVariable(value = "uuid")
-        @Exist(message = "1004", constraintValidator = ExistUserValidator.class) UUID uuid) {
-        userService.deleteUser(uuid);
-        return new Response<>(Status.SUCCESS, HttpStatus.OK.value());
+    @DeleteMapping("/{id}")
+    public ModelAndView deleteUser(@PathVariable(value = "id") Long userId) {
+        userService.deleteUser(userId);
+        return new ModelAndView("homepage", "message", "user deleted successfully!");
     }
 }

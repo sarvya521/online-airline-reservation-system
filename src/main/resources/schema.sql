@@ -1,27 +1,14 @@
-CREATE TABLE IF NOT EXISTS app_user (
+create TABLE IF NOT EXISTS app_user (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   email VARCHAR(320) NOT NULL,
   password VARCHAR(300) NOT NULL,
   f_name VARCHAR(50) NOT NULL,
   l_name VARCHAR(50) NOT NULL,
+  role VARCHAR() NOT NULL,
   CONSTRAINT uk_app_user_email UNIQUE(email)
 );
 
-CREATE TABLE IF NOT EXISTS app_role (
-  id BIGINT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(50) NOT NULL,
-  CONSTRAINT uk_app_role_name UNIQUE(name)
-);
-
-CREATE TABLE IF NOT EXISTS user_role (
-  fk_user_id BIGINT NOT NULL,
-  fk_role_id BIGINT NOT NULL,
-  PRIMARY KEY (fk_user_id, fk_role_id),
-  CONSTRAINT fk_user_role_app_user FOREIGN KEY(fk_user_id) REFERENCES app_user(id),
-  CONSTRAINT fk_user_role_app_role FOREIGN KEY(fk_role_id) REFERENCES app_role(id)
-);
-
-CREATE TABLE IF NOT EXISTS airport (
+create TABLE IF NOT EXISTS airport (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(100) NOT NULL,
   alias VARCHAR(10) NOT NULL,
@@ -29,7 +16,7 @@ CREATE TABLE IF NOT EXISTS airport (
   CONSTRAINT uk_airport_alias UNIQUE(alias),
 );
 
-CREATE TABLE IF NOT EXISTS aircraft (
+create TABLE IF NOT EXISTS aircraft (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   code VARCHAR(100) NOT NULL,
   model VARCHAR(10) NOT NULL,
@@ -39,7 +26,7 @@ CREATE TABLE IF NOT EXISTS aircraft (
   CONSTRAINT uk_aircraft_code UNIQUE(code)
 );
 
-CREATE TABLE IF NOT EXISTS flight (
+create TABLE IF NOT EXISTS flight (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   travel_date DATE NOT NULL,
   departure_time TIME NOT NULL,
@@ -59,7 +46,7 @@ CREATE TABLE IF NOT EXISTS flight (
   CONSTRAINT fk_flight_arrival_aircraft FOREIGN KEY(fk_aircraft_id) REFERENCES aircraft(id)
 );
 
-CREATE TABLE IF NOT EXISTS booking (
+create TABLE IF NOT EXISTS booking (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
   pnr VARCHAR(10) NOT NULL,
   booking_date DATE NOT NULL,

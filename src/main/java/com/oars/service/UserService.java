@@ -1,28 +1,16 @@
 package com.oars.service;
 
-import com.oars.dto.CreateUserDto;
-import com.oars.dto.UpdateUserDto;
 import com.oars.dto.UserDto;
-import com.oars.entity.User;
 
-import java.util.UUID;
-
-/**
- * Bundles all CRUD APIs for User.
- *
- * @author sarvesh
- * @version 0.0.1
- * @since 0.0.1
- */
 public interface UserService {
 
-    UserDto prepareUserDto(User user);
+    UserDto createUser(UserDto userDto);
 
-    UserDto getUserByUuid(UUID uuid);
+    UserDto updateUser(UserDto userDto);
 
-    UserDto createUser(CreateUserDto userDto);
+    void deleteUser(Long id);
 
-    UserDto updateUser(UpdateUserDto userDto);
+    UserDto checkLogin(String emailId, String password);
 
-    void deleteUser(UUID uuid);
+    boolean checkIfUserExists(String email);
 }

@@ -49,9 +49,8 @@ public class User implements Serializable {
     @Column(name = "l_name", nullable = false)
     private String lastName;
 
-    @OneToMany(mappedBy = "id.user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Fetch(value = FetchMode.SUBSELECT)
-    private Set<UserRole> userRoles = new HashSet<UserRole>();
+    @Column(name = "role", nullable = false)
+    private String role;
 
     @OneToMany(mappedBy = "flight", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Fetch(value = FetchMode.SUBSELECT)
