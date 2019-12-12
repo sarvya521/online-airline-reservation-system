@@ -43,11 +43,9 @@ public class Flight implements Serializable {
     @Column(name = "travel_date")
     private Date travelDate;
 
-    @Temporal(TemporalType.TIME)
     @Column(name = "departure_time")
     private Time departureTime;
 
-    @Temporal(TemporalType.TIME)
     @Column(name = "arrival_time")
     private Time arrivalTime;
 

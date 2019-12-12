@@ -52,6 +52,9 @@ public class Booking implements Serializable {
     @Column(name = "cost")
     private Integer cost;
 
+    @Column(name = "airline")
+    private String airline;
+
     @ManyToOne
     @JoinColumn(name = "fk_flight_id")
     private Flight flight;

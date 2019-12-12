@@ -4,7 +4,7 @@ create TABLE IF NOT EXISTS app_user (
   password VARCHAR(300) NOT NULL,
   f_name VARCHAR(50) NOT NULL,
   l_name VARCHAR(50) NOT NULL,
-  role VARCHAR() NOT NULL,
+  role VARCHAR(20) NOT NULL,
   CONSTRAINT uk_app_user_email UNIQUE(email)
 );
 
@@ -53,6 +53,7 @@ create TABLE IF NOT EXISTS booking (
   travel_date DATE NOT NULL,
   seat_class VARCHAR(10) NOT NULL,
   cost INT NOT NULL,
+  airline VARCHAR(50) NOT NULL,
   fk_flight_id BIGINT NOT NULL,
   fk_user_id BIGINT NOT NULL,
   CONSTRAINT fk_booking_flight FOREIGN KEY(fk_flight_id) REFERENCES flight(id),
