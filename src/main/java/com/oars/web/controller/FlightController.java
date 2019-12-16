@@ -10,7 +10,6 @@ import com.oars.service.AircraftService;
 import com.oars.service.AirportService;
 import com.oars.service.FlightService;
 import com.oars.util.DateUtil;
-import com.oars.util.JsonUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -75,8 +74,8 @@ public class FlightController {
         if (!errors.isEmpty()) {
             return new ModelAndView("error", "message", errors.toString());
         }
-        mav.addObject("airports", JsonUtil.convertToJson(airports));
-        mav.addObject("aircrafts", JsonUtil.convertToJson(aircrafts));
+        mav.addObject("airports", airports);
+        mav.addObject("aircrafts", aircrafts);
         return mav;
     }
 
