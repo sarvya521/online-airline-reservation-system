@@ -42,7 +42,7 @@ public class LoginController {
         return mav;
     }
 
-    @GetMapping("/agenthome")
+    @GetMapping("/adminhome")
     public ModelAndView adminHome() {
         return new ModelAndView("admindashboard");
     }

@@ -85,7 +85,7 @@
     <p th:each="error : ${errors}" th:text="${error}" style="color: red; font-weight: bold"/>
     <p th:if="${airlines!=null and !airlines.isEmpty()}"
        style="margin-top: 10px; font-weight: bolder">Airline Revenue Report in Descending Order of Revenue</p>
-    <table th:if="${customers!=null and !customers.isEmpty()}" border="1"
+    <table th:if="${airlines!=null and !airlines.isEmpty()}" border="1"
            style="border: 1px solid black; padding: 10px; text-align: center;">
         <thead>
         <tr>

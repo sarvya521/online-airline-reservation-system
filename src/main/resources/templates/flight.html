@@ -18,10 +18,10 @@
 		font-family: 'Open Sans', sans-serif;
 	}
 	.table-wrapper {
-		width: 700px;
+<!--		width: 700px;-->
 		margin: 30px auto;
         background: #fff;
-        padding: 20px;
+<!--        padding: 20px;-->
         box-shadow: 0 1px 1px rgba(0,0,0,.05);
     }
     .table-title {
@@ -95,10 +95,36 @@
 	table.table td .add {
 		display: none;
 	}
-
-
     </style>
+    <script th:inline = "javascript">
+        var airports = /*[[${airports}]]*/ [];
+        for (i=0; i< airports.length; i++){
+            console.log(airports[i].name);
+        }
+        var aircrafts = /*[[${aircrafts}]]*/ [];
+        for (i=0; i< aircrafts.length; i++){
+            console.log(aircrafts[i].code);
+        }
+    </script>
     <script type="text/javascript">
+var departureFromSelectHtml = '<select type="text" class="form-control" name="departureFrom" id="departureFrom">';
+$.each(airports, function(i, airport){
+departureFromSelectHtml += '<option value='+airport.id+'>'+airport.name+'('+airport.alias+')</option>';
+});
+departureFromSelectHtml += '</select>';
+
+var arrivalAtSelectHtml = '<select type="text" class="form-control" name="arrivalAt" id="arrivalAt">';
+$.each(airports, function(i, airport){
+arrivalAtSelectHtml += '<option value='+airport.id+'>'+airport.name+'('+airport.alias+')</option>';
+});
+arrivalAtSelectHtml += '</select>';
+
+var aircraftSelectHtml = '<select type="text" class="form-control" name="aircraft" id="aircraft">';
+$.each(aircrafts, function(i, aircraft){
+aircraftSelectHtml += '<option value='+aircraft.id+'>'+aircraft.model+'('+aircraft.code+')</option>';
+});
+aircraftSelectHtml += '</select>';
+
 $(document).ready(function(){
 	$('[data-toggle="tooltip"]').tooltip();
 	var actions = $("table td:last-child").html();
@@ -110,16 +136,16 @@ $(document).ready(function(){
 		$(this).attr("disabled", "disabled");
 		var index = $("table tbody tr:last-child").index();
         var row = '<tr>' +
-            '<td><input type="text" class="form-control" name="travelDate" id="travelDate"></td>' +
+            '<td><input type="text" class="form-control" name="travelDate" id="travelDate" onkeydown="return false;"></td>' +
 			'<td><input type="text" class="form-control" name="departureTime" id="departureTime"></td>' +
 			'<td><input type="text" class="form-control" name="arrivalTime" id="arrivalTime"></td>' +
-			'<td><input type="text" class="form-control" name="departureFrom" id="departureFrom"></td>' +
-			'<td><input type="text" class="form-control" name="arrivalAt" id="arrivalAt"></td>' +
+			'<td>' + departureFromSelectHtml + '</td>' +
+			'<td>' + arrivalAtSelectHtml + '</td>' +
 			'<td><input type="text" class="form-control" name="businessClassFare" id="businessClassFare"></td>' +
 			'<td><input type="text" class="form-control" name="firstclassFare" id="firstclassFare"></td>' +
 			'<td><input type="text" class="form-control" name="economyClassFare" id="economyClassFare"></td>' +
 			'<td><input type="text" class="form-control" name="airline" id="airline"></td>' +
-			'<td><input type="text" class="form-control" name="aircraft" id="aircraft"></td>' +
+			'<td>' + aircraftSelectHtml + '</td>' +
 			'<td><a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
         '</tr>';
     	$("table").append(row);
@@ -180,8 +206,22 @@ $(document).ready(function(){
     });
 	// Edit row on edit button click
 	$(document).on("click", ".edit", function(){
-        $(this).parents("tr").find("td:not(:last-child)").each(function(){
-			$(this).html('<input type="text" class="form-control" name="' + $(this).attr("param") + '" value="' + $(this).text() + '">');
+        $(this).parents("tr").find("td:not(:last-child)").each(function() {
+            if($(this).attr("param") == 'departureFrom') {
+                $(this).html(departureFromSelectHtml);
+                $(this).find("select").val($(this).attr("paramvalue"));
+                $(this).find("select").removeProp("id");
+            } else if($(this).attr("param") == 'arrivalAt') {
+                $(this).html(arrivalAtSelectHtml);
+                $(this).find("select").val($(this).attr("paramvalue"));
+                $(this).find("select").removeProp("id");
+            } else if($(this).attr("param") == 'aircraft') {
+                $(this).html(aircraftSelectHtml);
+                $(this).find("select").val($(this).attr("paramvalue"));
+                $(this).find("select").removeProp("id");
+            } else {
+                $(this).html('<input type="text" class="form-control" name="' + $(this).attr("param") + '" value="' + $(this).text() + '">');
+            }
 		});
 		$(this).parents("tr").find("input").each(function(){
 		    if($(this).prop("name") == "flightId") {
@@ -233,8 +273,6 @@ $(document).ready(function(){
 		$(".add-new").removeAttr("disabled");
     });
 });
-
-
     </script>
 </head>
 <body>
@@ -293,7 +331,7 @@ $(document).ready(function(){
     </div>
 </nav>
 
-<div class="container" style="margin-top: 200px">
+<div class="container" style="margin-top: 200px; width:100%">
     <div class="table-wrapper">
         <div class="table-title">
             <div class="row">
@@ -332,11 +370,13 @@ $(document).ready(function(){
                 <td th:text="${flight.arrivalTime}" param="arrivalTime"></td>
                 <input type="hidden" name="arrivalTime" th:value="${flight.arrivalTime}"/>
 
-                <td th:text="${flight.departureFrom.id}" param="departureFrom"></td>
-                <input type="hidden" name="departureFrom" th:value="${flight.departureFrom.id}"/>
+                <td th:text="${flight.departureFrom.id}" param="departureFrom"
+                    th:attr="paramvalue='\'' + #{flight.departureFrom.id} + '\''"></td>
+                <input type="hidden" name="departureFrom" th:value="${flight.departureFrom.name} + ' (' + ${flight.departureFrom.alias} + ')'"/>
 
-                <td th:text="${flight.arrivalAt.id}" param="arrivalAt"></td>
-                <input type="hidden" name="arrivalAt" th:value="${flight.arrivalAt.id}"/>
+                <td th:text="${flight.arrivalAt.id}" param="arrivalAt"
+                    th:attr="paramvalue='\'' + #{flight.arrivalAt.id} + '\''"></td>
+                <input type="hidden" name="arrivalAt" th:value="${flight.arrivalAt.name} + ' (' + ${flight.arrivalAt.alias} + ')'"/>
 
                 <td th:text="${flight.businessClassFare}" param="businessClassFare"></td>
                 <input type="hidden" name="businessClassFare" th:value="${flight.businessClassFare}"/>
@@ -350,7 +390,8 @@ $(document).ready(function(){
                 <td th:text="${flight.airline}" param="airline"></td>
                 <input type="hidden" name="airline" th:value="${flight.airline}"/>
 
-                <td th:text="${flight.aircraft.id}" param="economyClassFare"></td>
+                <td th:text="${flight.aircraft.id}" param="aircraft"
+                    th:attr="paramvalue='\'' + #{flight.aircraft.id} + '\''"></td>
                 <input type="hidden" name="aircraft" th:value="${flight.aircraft.id}"/>
 
                 <td>
@@ -363,10 +404,5 @@ $(document).ready(function(){
         </table>
     </div>
 </div>
-<script>
-    var
-
-
-</script>
 </body>
 </html>

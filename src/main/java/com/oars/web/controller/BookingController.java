@@ -375,7 +375,7 @@ public class BookingController {
             mav.addObject("errors", errors);
             return mav;
         }
-        int selectedMonth = Integer.parseInt(selectedMonthStr);
+        int selectedMonth = Integer.parseInt(selectedMonthStr) + 1;
         int selectedYear = Integer.parseInt(selectedYearStr);
         LocalDate startDateOfMonth =
                 LocalDate.of(selectedYear, selectedMonth, 1);
@@ -384,14 +384,14 @@ public class BookingController {
                         DateUtil.lastDayOfMonth(selectedYear, selectedMonth));
         List<BookingDto> bookings = bookingService.findAllByBookingDateBetween(startDateOfMonth, lastDateOfMonth);
         if (bookings.isEmpty()) {
-            errors.add("No bookings found for this user");
+            errors.add("No bookings found for this month");
             mav.addObject("errors", errors);
             return mav;
         }
 
         mav.addObject("bookings", bookings);
         mav.addObject("selectedYear", selectedYear);
-        mav.addObject("selectedMonth", selectedMonth);
+        mav.addObject("selectedMonth", selectedMonth-1);
         return mav;
     }
 
