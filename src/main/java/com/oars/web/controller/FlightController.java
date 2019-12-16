@@ -59,12 +59,22 @@ public class FlightController {
             mav.addObject("message", "Restricted Access. Or Your Session is expired. Try login again");
             return mav;
         }
+        List<String> errors = new ArrayList<>();
         ModelAndView mav = new ModelAndView("flight");
         List<FlightDto> flights = flightService.getAllFlights();
         mav.addObject("flights", flights);
         List<AirportDto> airports = airportService.getAllAirport();
-        mav.addObject("airports", airports);
+        if (airports.isEmpty()) {
+            errors.add("no aiport found in the system to create flight");
+        }
         List<AircraftDto> aircrafts = aircraftService.getAllAircraft();
+        if (aircrafts.isEmpty()) {
+            errors.add("no aircraft found in the system to create flight");
+        }
+        if (!errors.isEmpty()) {
+            return new ModelAndView("error", "message", errors.toString());
+        }
+        mav.addObject("airports", airports);
         mav.addObject("aircrafts", aircrafts);
         return mav;
     }
