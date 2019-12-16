@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Customer CRUD</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+    <style type="text/css">
+    body {
+        color: #404E67;
+        background: #F5F7FA;
+		font-family: 'Open Sans', sans-serif;
+	}
+	.table-wrapper {
+		width: 700px;
+		margin: 30px auto;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    }
+    .table-title {
+        padding-bottom: 10px;
+        margin: 0 0 10px;
+    }
+    .table-title h2 {
+        margin: 6px 0 0;
+        font-size: 22px;
+    }
+    .table-title .add-new {
+        float: right;
+		height: 30px;
+		font-weight: bold;
+		font-size: 12px;
+		text-shadow: none;
+		min-width: 100px;
+		border-radius: 50px;
+		line-height: 13px;
+    }
+	.table-title .add-new i {
+		margin-right: 4px;
+	}
+    table.table {
+        table-layout: fixed;
+    }
+    table.table tr th, table.table tr td {
+        border-color: #e9e9e9;
+    }
+    table.table th i {
+        font-size: 13px;
+        margin: 0 5px;
+        cursor: pointer;
+    }
+    table.table th:last-child {
+        width: 100px;
+    }
+    table.table td a {
+		cursor: pointer;
+        display: inline-block;
+        margin: 0 5px;
+		min-width: 24px;
+    }
+	table.table td a.add {
+        color: #27C46B;
+    }
+    table.table td a.edit {
+        color: #FFC107;
+    }
+    table.table td a.delete {
+        color: #E34724;
+    }
+    table.table td i {
+        font-size: 19px;
+    }
+	table.table td a.add i {
+        font-size: 24px;
+    	margin-right: -1px;
+        position: relative;
+        top: 3px;
+    }
+    table.table .form-control {
+        height: 32px;
+        line-height: 32px;
+        box-shadow: none;
+        border-radius: 2px;
+    }
+	table.table .form-control.error {
+		border-color: #f50000;
+	}
+	table.table td .add {
+		display: none;
+	}
+
+
+    </style>
+    <script type="text/javascript">
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip();
+	var actions = $("table td:last-child").html();
+	if(actions == undefined) {
+	    actions = '<a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>';
+	}
+	// Append table with add row form on add new button click
+    $(".add-new").click(function(){
+		$(this).attr("disabled", "disabled");
+		var index = $("table tbody tr:last-child").index();
+        var row = '<tr>' +
+            '<td><input type="text" class="form-control" name="travelDate" id="travelDate"></td>' +
+			'<td><input type="text" class="form-control" name="departureTime" id="departureTime"></td>' +
+			'<td><input type="text" class="form-control" name="arrivalTime" id="arrivalTime"></td>' +
+			'<td><input type="text" class="form-control" name="departureFrom" id="departureFrom"></td>' +
+			'<td><input type="text" class="form-control" name="arrivalAt" id="arrivalAt"></td>' +
+			'<td><input type="text" class="form-control" name="businessClassFare" id="businessClassFare"></td>' +
+			'<td><input type="text" class="form-control" name="firstclassFare" id="firstclassFare"></td>' +
+			'<td><input type="text" class="form-control" name="economyClassFare" id="economyClassFare"></td>' +
+			'<td><input type="text" class="form-control" name="airline" id="airline"></td>' +
+			'<td><input type="text" class="form-control" name="aircraft" id="aircraft"></td>' +
+			'<td><a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
+        '</tr>';
+    	$("table").append(row);
+		$("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+	// Add row on add button click
+	$(document).on("click", ".add", function(){
+		var empty = false;
+		var input = $(this).parents("tr").find('input[type="text"]');
+        input.each(function(){
+			if(!$(this).val()){
+				$(this).addClass("error");
+				empty = true;
+			} else{
+                $(this).removeClass("error");
+            }
+		});
+		$(this).parents("tr").find(".error").first().focus();
+		if(!empty){
+			input.each(function(){
+				$(this).parent("td").html($(this).val());
+				if($(this).prop("name") == "travelDate") {
+					$("#travelDate").val($(this).val());
+				}
+				else if($(this).prop("name") == "departureTime") {
+					$("#departureTime").val($(this).val());
+				}
+				else if($(this).prop("name") == "arrivalTime") {
+					$("#arrivalTime").val($(this).val());
+				}
+				else if($(this).prop("name") == "departureFrom") {
+					$("#departureFrom").val($(this).val());
+				}
+				else if($(this).prop("name") == "arrivalAt") {
+					$("#arrivalAt").val($(this).val());
+				}
+				else if($(this).prop("name") == "businessClassFare") {
+					$("#businessClassFare").val($(this).val());
+				}
+				else if($(this).prop("name") == "firstclassFare") {
+					$("#firstclassFare").val($(this).val());
+				}
+				else if($(this).prop("name") == "economyClassFare") {
+					$("#economyClassFare").val($(this).val());
+				}
+				else if($(this).prop("name") == "airline") {
+					$("#airline").val($(this).val());
+				}
+				else if($(this).prop("name") == "aircraft") {
+					$("#aircraft").val($(this).val());
+				}
+			});
+			$("#addEditFlight").submit();
+			$(this).parents("tr").find(".add, .edit").toggle();
+			$(".add-new").removeAttr("disabled");
+		}
+    });
+	// Edit row on edit button click
+	$(document).on("click", ".edit", function(){
+        $(this).parents("tr").find("td:not(:last-child)").each(function(){
+			$(this).html('<input type="text" class="form-control" name="' + $(this).attr("param") + '" value="' + $(this).text() + '">');
+		});
+		$(this).parents("tr").find("input").each(function(){
+		    if($(this).prop("name") == "flightId") {
+                $("#flightId").val($(this).val());
+            }
+			else if($(this).prop("name") == "travelDate") {
+                $("#travelDate").val($(this).val());
+            }
+            else if($(this).prop("name") == "departureTime") {
+                $("#departureTime").val($(this).val());
+            }
+            else if($(this).prop("name") == "arrivalTime") {
+                $("#arrivalTime").val($(this).val());
+            }
+            else if($(this).prop("name") == "departureFrom") {
+                $("#departureFrom").val($(this).val());
+            }
+            else if($(this).prop("name") == "arrivalAt") {
+                $("#arrivalAt").val($(this).val());
+            }
+            else if($(this).prop("name") == "businessClassFare") {
+                $("#businessClassFare").val($(this).val());
+            }
+            else if($(this).prop("name") == "firstclassFare") {
+                $("#firstclassFare").val($(this).val());
+            }
+            else if($(this).prop("name") == "economyClassFare") {
+                $("#economyClassFare").val($(this).val());
+            }
+            else if($(this).prop("name") == "airline") {
+                $("#airline").val($(this).val());
+            }
+            else if($(this).prop("name") == "aircraft") {
+                $("#aircraft").val($(this).val());
+            }
+		});
+		$(this).parents("tr").find(".add, .edit").toggle();
+		$(".add-new").attr("disabled", "disabled");
+    });
+	// Delete row on delete button click
+	$(document).on("click", ".delete", function(){
+	    $(this).parents("tr").find("input").each(function(){
+		    if($(this).prop("name") == "flightId") {
+                $("#flight").val($(this).val());
+            }
+		});
+		$("#deleteFlight").submit();
+        $(this).parents("tr").remove();
+		$(".add-new").removeAttr("disabled");
+    });
+});
+
+
+    </script>
+</head>
+<body>
+<form action="#" th:action="@{/flight/addedit}" id="addEditFlight" method="post">
+    <input type="hidden" name="flightId" id="flightId">
+    <input type="hidden" name="travelDate" id="travelDate"/>
+    <input type="hidden" name="departureTime" id="departureTime"/>
+    <input type="hidden" name="arrivalTime" id="arrivalTime"/>
+    <input type="hidden" name="departureFrom" id="departureFrom"/>
+    <input type="hidden" name="arrivalAt" id="arrivalAt"/>
+    <input type="hidden" name="businessClassFare" id="businessClassFare"/>
+    <input type="hidden" name="firstclassFare" id="firstclassFare"/>
+    <input type="hidden" name="economyClassFare" id="economyClassFare"/>
+    <input type="hidden" name="airline" id="airline"/>
+    <input type="hidden" name="aircraft" id="aircraft"/>
+</form>
+<form action="#" th:action="@{/flight/delete}" id="deleteFlight" method="post">
+    <input type="hidden" name="flight" id="flight">
+</form>
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" data-target="#navbarCollapse"
+                    data-toggle="collapse" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand">Hi <span th:text="${session.firstName}"
+                                                      th:unless="${session == null}"></span></a>
+        </div>
+        <!-- Collection of nav links and other content for toggling -->
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="#" th:href="@{/agenthome}">Home</a></li>
+                <li><a href="#" th:href="@{/airport/crud}">View/Add/Edit/Delete Airports</a></li>
+                <li><a href="#" th:href="@{/aircraft/crud}">View/Add/Edit/Delete Aircrafts</a></li>
+                <li class="active"><a href="#" th:href="@{/flight/crud}">View/Add/Edit/Delete Flights</a></li>
+                <li><a href="#" th:href="@{/user/customer/waiting}">View Waiting List</a></li>
+                <li><a href="#" th:href="@{/booking/customer/modify}">Modify Customer Booking</a></li>
+                <li><a href="#" th:href="@{/booking/agent/book}">Make Reservation For Customer</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 200px">
+    <div class="table-wrapper">
+        <div class="table-title">
+            <div class="row">
+                <div class="col-sm-8"><h2>Flight <b>Details</b></h2></div>
+                <div class="col-sm-4">
+                    <button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New</button>
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>TravelDate</th>
+                <th>DepartureTime</th>
+                <th>ArrivalTime</th>
+                <th>DepartureFrom</th>
+                <th>ArrivalAt</th>
+                <th>BusinessClassFare</th>
+                <th>FirstClassFare</th>
+                <th>EconomyClassFare</th>
+                <th>Airline</th>
+                <th>Aircraft</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody th:if="${flights!=null and !flights.isEmpty()}">
+            <tr th:each="flight : ${flights}">
+                <input type="hidden" name="flightId" th:value="${flight.id}"/>
+
+                <td th:text="${flight.travelDate}" param="travelDate"></td>
+                <input type="hidden" name="travelDate" th:value="${flight.travelDate}"/>
+
+                <td th:text="${flight.departureTime}" param="departureTime"></td>
+                <input type="hidden" name="departureTime" th:value="${flight.departureTime}"/>
+
+                <td th:text="${flight.arrivalTime}" param="arrivalTime"></td>
+                <input type="hidden" name="arrivalTime" th:value="${flight.arrivalTime}"/>
+
+                <td th:text="${flight.departureFrom.id}" param="departureFrom"></td>
+                <input type="hidden" name="departureFrom" th:value="${flight.departureFrom.id}"/>
+
+                <td th:text="${flight.arrivalAt.id}" param="arrivalAt"></td>
+                <input type="hidden" name="arrivalAt" th:value="${flight.arrivalAt.id}"/>
+
+                <td th:text="${flight.businessClassFare}" param="businessClassFare"></td>
+                <input type="hidden" name="businessClassFare" th:value="${flight.businessClassFare}"/>
+
+                <td th:text="${flight.firstclassFare}" param="firstclassFare"></td>
+                <input type="hidden" name="firstclassFare" th:value="${flight.firstclassFare}"/>
+
+                <td th:text="${flight.economyClassFare}" param="economyClassFare"></td>
+                <input type="hidden" name="economyClassFare" th:value="${flight.economyClassFare}"/>
+
+                <td th:text="${flight.airline}" param="airline"></td>
+                <input type="hidden" name="airline" th:value="${flight.airline}"/>
+
+                <td th:text="${flight.aircraft.id}" param="economyClassFare"></td>
+                <input type="hidden" name="aircraft" th:value="${flight.aircraft.id}"/>
+
+                <td>
+                    <a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
+                    <a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>
+                    <a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

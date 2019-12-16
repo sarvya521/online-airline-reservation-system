@@ -8,16 +8,16 @@ Configuration:
   Loggers:
     logger:
       - name: com.oars
-        level: INFO
+        level: DEBUG
         additivity: false
         AppenderRef:
           - ref: Console-Appender
       - name: org.springframework.web
-        level: INFO
+        level: DEBUG
         additivity: false
         AppenderRef:
           - ref: Console-Appender
     Root:
-      level: INFO
+      level: DEBUG
       AppenderRef:
         - ref: Console-Appender

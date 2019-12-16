@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>KingFlyer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}">
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+</head>
+<body>
+<div class="container" ng-controller="controllerName" style="width:1600px; margin-top:60px;">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-lock"></span> Login
+                </div>
+                <div class="panel-body">
+                    <form class="myForm" role="form" name="userform" action="checkLogin" method="post">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="inputEmail" class="col-sm-3 control-label">Email</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control"
+                                           placeholder="Enter Email ID" name="email" required/>
+                                </div>
+                            </div>
+                            <br/><br/>
+                            <div class="form-group">
+                                <label for="inputPassword" class="col-sm-3 control-label">
+                                    Password
+                                </label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" placeholder="Enter Password"
+                                           name="password" required/>
+                                </div>
+                            </div>
+                            <br><br>
+                            <div class="form-group last">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        Sign in
+                                    </button>
+                                    <button type="reset" class="btn btn-default btn-sm">
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <span>Not Registered? </span><a href="register">Register here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

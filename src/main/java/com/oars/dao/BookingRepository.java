@@ -7,19 +7,29 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findAllByUser(User user);
+    List<Booking> findByUser(User user);
 
-    List<Booking> findAllByBookingDateBetween(Date from, Date to);
+    List<Booking> findByUserAndTravelDateLessThan(User user, LocalDate travelDate);
 
-    List<Booking> findAllByFlight(Flight flight);
+    List<Booking> findByUserAndTravelDateGreaterThanEqual(User user, LocalDate travelDate);
 
-    List<Booking> findAllByAirline(String airline);
+    List<Booking> findByBookingDateBetween(LocalDate from, LocalDate to);
+
+    List<Booking> findByFlight(Flight flight);
+
+    List<Booking> findByAirline(String airline);
+
+    public static interface CustomerRevenue {
+        User getUser();
+
+        Long getTotalRevenue();
+    }
 
     @Query(value =
             "SELECT u AS user, SUM(b.cost) AS totalRevenue " +
@@ -28,6 +38,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     "GROUP BY u.id")
     List<CustomerRevenue> findCustomersWithTheirTotalRevenue();
 
+    public static interface FlightBooking {
+        Flight getFlight();
+
+        Long getTotalBookings();
+    }
+
     @Query(value =
             "SELECT f AS flight, COUNT(b.id) AS totalBookings " +
                     "FROM Booking b " +
@@ -35,15 +51,30 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     "GROUP BY f.id")
     List<FlightBooking> findFlightsWithTotalBookings();
 
-    public static interface CustomerRevenue {
-        User getUser();
+    public static interface AirlineRevenue {
+        String getAirline();
 
         Long getTotalRevenue();
     }
 
-    public static interface FlightBooking {
+    @Query(value =
+            "SELECT b.airline AS airline, SUM(b.cost) AS totalRevenue " +
+                    "FROM Booking b " +
+                    "GROUP BY b.airline")
+    List<AirlineRevenue> findAirlinesWithTheirTotalRevenue();
+
+    public static interface FlightRevenue {
         Flight getFlight();
 
-        Long getTotalBookings();
+        Long getTotalRevenue();
     }
+
+    @Query(value =
+            "SELECT f AS flight, SUM(b.cost) AS totalRevenue " +
+                    "FROM Booking b " +
+                    "INNER JOIN b.flight f " +
+                    "GROUP BY f.id")
+    List<FlightRevenue> findFlightsWithTheirTotalRevenue();
+
+
 }

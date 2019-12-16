@@ -5,7 +5,7 @@ spring:
     url: jdbc:mysql://localhost:3306/oars
     username: root
     password: root
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
       minimumIdle: 2
       maximumPoolSize: 4

@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class AirportServiceImpl implements AirportService {
 
@@ -26,6 +29,15 @@ public class AirportServiceImpl implements AirportService {
 
     public AirportServiceImpl(PlatformTransactionManager transactionManager) {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
+    }
+
+    @Override
+    @Transactional
+    public List<AirportDto> getAllAirport() {
+        List<Airport> airports = airportRepository.findAll();
+        return airports.stream()
+                .map(airport -> airportMapper.convertToDto(airport))
+                .collect(Collectors.toList());
     }
 
     @Override

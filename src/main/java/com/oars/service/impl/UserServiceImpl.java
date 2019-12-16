@@ -1,5 +1,6 @@
 package com.oars.service.impl;
 
+import com.oars.constant.Role;
 import com.oars.dao.UserRepository;
 import com.oars.dto.UserDto;
 import com.oars.entity.User;
@@ -13,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -28,6 +31,22 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(PlatformTransactionManager transactionManager) {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
+    }
+
+    @Override
+    public List<UserDto> getAllCustomers() {
+        List<User> users = userRepository.findByRole(Role.CUSTOMER.name());
+        return users.stream()
+                .map(user -> userMapper.convertToDto(user))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDto> getAllAgents() {
+        List<User> users = userRepository.findByRole(Role.CUSTOMER_REPRESENTATIVE.name());
+        return users.stream()
+                .map(user -> userMapper.convertToDto(user))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -66,7 +85,9 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UserDto userDto) {
         Long id = userDto.getId();
         User user = userRepository.findById(id).get();
-        userMapper.mergeToEntity(userDto, user);
+        user.setEmail(userDto.getEmail());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {

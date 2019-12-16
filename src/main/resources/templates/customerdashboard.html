@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-theme.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery-ui-1.12.1.css}">
+    <style>
+        .wrapper {
+          display: block;
+          padding: 3px;
+        }
+
+        #slider-range {
+          width: 40%;
+          margin: 10px;
+        }
+
+        #slider-range .ui-slider-handle {
+          background: #0e6;
+          border-radius: 6px;
+        }
+
+        #slider-range .ui-slider-handle.ui-state-active {
+          border: #093;
+        }
+
+        #slider-range .ui-slider-range {
+          background: #093;
+        }
+
+        .ui-tooltip,
+        .arrow:after {
+          background: #000;
+        }
+
+        .ui-tooltip {
+          color: #fff;
+          border: 0;
+          border-radius: 10px;
+          box-shadow: none;
+        }
+
+        .arrow {
+          width: 70px;
+          height: 16px;
+          overflow: hidden;
+          position: absolute;
+          left: 50%;
+          margin-left: -35px;
+          bottom: -16px;
+        }
+
+        .arrow.top {
+          top: -16px;
+          bottom: auto;
+        }
+
+        .arrow.left {
+          left: 20%;
+        }
+
+        .arrow:after {
+          content: "";
+          position: absolute;
+          left: 20px;
+          top: -20px;
+          width: 25px;
+          height: 25px;
+          box-shadow: 6px 5px 9px -9px black;
+          -webkit-transform: rotate(45deg);
+          -ms-transform: rotate(45deg);
+          transform: rotate(45deg);
+        }
+
+        .arrow.top:after {
+          bottom: -20px;
+          top: auto;
+        }
+
+        #reset {
+          color: #fff;
+          background: #090;
+          border-radius: 6px;
+          font-family: verdana;
+          font-weight: bold;
+          display: inline-block;
+          padding: .25em;
+          text-decoration: none;
+        }
+
+        th {
+            text-align: center;
+        }
+
+    </style>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery-ui-1.12.1.js}"></script>
+    <script>
+      $( function() {
+        $( "#traveldate" ).datepicker({
+            dateFormat: 'yy-mm-dd',
+            yearRange: '2019:2020',
+            minDate: new Date()
+        });
+        $( "#returndate" ).datepicker({
+            dateFormat: 'yy-mm-dd',
+            yearRange: '2019:2020',
+            minDate: new Date()
+        });
+      });
+
+    </script>
+</head>
+<body style="margin:10px">
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" data-target="#navbarCollapse"
+                    data-toggle="collapse" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand">Hi <span th:text="${session.firstName}"
+                                                      th:unless="${session == null}"></span></a>
+        </div>
+        <!-- Collection of nav links and other content for toggling -->
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li th:unless="${session == null || session.userId == null}">
+                    <a href="#" th:href="@{/booking/user/pastBookings}">View Past Bookings</a>
+                </li>
+                <li th:unless="${session == null || session.userId == null}">
+                    <a href="#" th:href="@{/booking/user/upcomingBookings}">View Upcoming Bookings</a>
+                </li>
+                <li th:unless="${session == null || session.userId == null}">
+                    <a href="#" th:href="@{/booking/user/cancelBooking}">Cancel Booking</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div style="margin-top: 80px;">
+    <p th:text="${message}" th:unless="${message == null}" style="color: green; font-weight: bolder;"></p>
+    <p th:each="error : ${errors}" th:text="${error}" style="color: red; font-weight: bold"/>
+    <h3>Search Flight</h3>
+    <form action="#" th:action="@{/flight/search}" method="get" id="searchFlight">
+        <table>
+            <tr>
+                <th>Source</th>
+                <th>Destination</th>
+                <th>Traveling On</th>
+                <!--                <th>Returning On</th>-->
+                <th>Class</th>
+                <th></th>
+            </tr>
+            <tr>
+                <td>
+                    <select name="source" id="source" style="width:98%">
+                        <option value="0">select</option>
+                        <option th:each="source : ${sources}" th:value="${source.id}"
+                                th:text="${source.name} + ' (' + ${source.alias} + ')'"></option>
+                    </select>
+                </td>
+                <td>
+                    <select name="destination" id="destination" style="width:98%">
+                        <option value="0">select</option>
+                        <option th:each="destination : ${destinations}" th:value="${destination.id}"
+                                th:text="${destination.name} + ' (' + ${destination.alias} + ')'"></option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" name="traveldate" id="traveldate" onkeydown="return false;" style="width:98%">
+                </td>
+                <!--                <td>-->
+                <!--                    <input type="text" name="returndate" id="returndate" onkeydown="return false;" style="width:98%">-->
+                <!--                </td>-->
+                <td>
+                    <select name="class" id="class">
+                        <option value="ECONOMY">Economy Class</option>
+                        <option value="BUSINESS">Business Class</option>
+                        <option value="FIRST">First Class</option>
+                    </select>
+                </td>
+                <td style="padding-left: 5px;">
+                    <input type="submit" value="search">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div><br><br></div>
+<div th:if="${srcToDestFlights} != null">
+    <form action="#" th:action="@{/flight/search}" id="searchWithSortAndFilter">
+        <input type="hidden" name="sortfilter" value="true">
+        <input type="hidden" name="sortBy" id="sortBy">
+        <input type="hidden" name="filterMinPrice" id="filterMinPrice">
+        <input type="hidden" name="filterMaxPrice" id="filterMaxPrice">
+        <input type="hidden" name="filterAirlines" id="filterAirlines">
+    </form>
+    <form action="#" th:action="@{/booking/create}" id="bookflight" method="post">
+        <input type="hidden" name="flight" id="flightBooked">
+    </form>
+    <table>
+        <tr>
+            <td>
+                <div><span style="font-weight:bold">SORT BY:</span>
+                    <select id="sortCriteria" onchange="sortFlights(this.value);">
+                        <option value="PRICE_ASC">price: low to high</option>
+                        <option value="PRICE_DESC">price: high to low</option>
+                        <option value="DEPARTURE_ASC">leaving early</option>
+                        <option value="DEPARTURE_DESC">leaving late</option>
+                        <option value="ARRIVAL_ASC">arriving early</option>
+                        <option value="ARRIVAL_DESC">arriving late</option>
+                    </select>
+                </div>
+                <br>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div>
+                    <div>
+                        <p style="font-weight:bold">PRICE FILTER</p>
+                        <div class="wrapper">
+                            <div id="slider-range">
+                            </div>
+                        </div>
+                        <span id="mincost" style="font-weight:bold" th:text="${lowestFlightCost}"></span>
+                        =>
+                        <span id="highcost" style="font-weight:bold" th:text="${highestFlightCost}"></span>
+                    </div>
+                    <br>
+                    <div>
+                        <p style="font-weight:bold">AIRLINE FILTER</p>
+                        <fieldset>
+                            <ul>
+                                <li th:each="airline : ${airlines}">
+                                    <input type="checkbox" name="selectedairline" th:value="${airline}"
+                                           th:text="${airline}"/><br>
+                                </li>
+                            </ul>
+                        </fieldset>
+                    </div>
+                    <div>
+                        <input type="button" value="Apply Filters" id="applyFilter" onclick="filterFlights();">
+                        &nbsp;
+                        <input type="button" value="Clear Filters" id="clearFilter">
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <br><br>
+    <table width="70%" border="1" style="border: 1px solid black; padding: 10px; text-align: center;">
+        <tr>
+            <th>DepartureTime</th>
+            <th>ArrivalTime</th>
+            <th>Fare</th>
+            <th>Airline</th>
+            <th></th>
+        </tr>
+        <tr th:each="flight : ${srcToDestFlights}">
+            <td th:text="${flight.departureTime}"></td>
+            <td th:text="${flight.arrivalTime}"></td>
+            <td th:switch="${seatPreference}">
+                <span th:case="'ECONOMY'" th:text="${flight.economyClassFare}"/>
+                <span th:case="'BUSINESS'" th:text="${flight.businessClassFare}"/>
+                <span th:case="'FIRST'" th:text="${flight.firstclassFare}"/>
+            </td>
+            <td th:text="${flight.airline}"></td>
+            <td>
+                <a href="javascript:void(0);"
+                   th:onclick="'javascript:bookFlight(' + ${flight.id} + ');'">Book</a>
+            </td>
+        </tr>
+    </table>
+
+    <script th:inline="javascript">
+    /*<![CDATA[*/
+    $(function() {
+        var lowestFlightCost = /*[[${lowestFlightCost}]]*/;
+        var highestFlightCost = /*[[${highestFlightCost}]]*/;
+        var source = /*[[${sourceAirportId}]]*/;
+        var destination = /*[[${destinationAirportId}]]*/;
+        var travelDate = /*[[${travelDate}]]*/;
+        var seatPreference = /*[[${seatPreference}]]*/;
+        var sortBy = /*[[${sortBy}]]*/;
+        var selectedAirlines = /*[[${filterAirlines}]]*/;
+
+        $("#source").val(source);
+        $("#destination").val(destination);
+        $("#traveldate").val(travelDate);
+        $("#class").val(seatPreference);
+        $("#clearFilter").bind( "click", function() {
+            $("#source").val(source);
+            $("#destination").val(destination);
+            $("#traveldate").val(travelDate);
+            $("#class").val(seatPreference);
+            $("#searchFlight").submit();
+        });
+        if(sortBy) {
+            $("#sortCriteria").val(sortBy);
+        }
+        if(selectedAirlines) {
+            var airlinesFiltered = selectedAirlines.split(",");
+            if($("input[name='selectedairline']").length == 1) {
+                $("input[name='selectedairline']").prop('checked', true);
+            } else if($("input[name='selectedairline']").length > 1) {
+                $.each("input[name='selectedairline']", function( index, element ){
+                    if(airlinesFiltered.indexOf($(element).val()) != -1) {
+                        $(element).prop('checked', true);
+                    }
+                });
+            }
+
+            var commaSepSelectedAirlines =
+            $("input[name='selectedairline']:checked")
+                .map(function() {
+                    return this.value;
+                })
+                .get()
+                .join(',');
+            $("#filterAirlines").val($.trim(commaSepSelectedAirlines));
+        }
+        if(lowestFlightCost) {
+            $("#filterMinPrice").val(lowestFlightCost);
+            $("#filterMaxPrice").val(highestFlightCost);
+            $("#mincost").html(lowestFlightCost);
+            $("#highcost").html(highestFlightCost);
+        }
+        $("#slider-range").slider({
+            min: lowestFlightCost,
+            max: highestFlightCost,
+            step: 1,
+            range: true,
+            values: [lowestFlightCost, highestFlightCost],
+            slide: function(event, ui) {
+                var low, high;
+                low = $(this).slider("values", 0);
+                high = $(this).slider("values", 1);
+                $("#filterMinPrice").val(low);
+                $("#filterMaxPrice").val(high);
+                $("#mincost").html(low);
+                $("#highcost").html(high);
+                $(this).tooltip("option", "content", low + ":" + high);
+            }
+        });
+
+        $("#slider-range").tooltip({
+            items: ".ui-slider",
+            content: lowestFlightCost+":"+highestFlightCost,
+            position: {
+                my: "center bottom-20",
+                at: "center top",
+                using: function(position, feedback) {
+                    $(this).css(position);
+                    $("<div>")
+                      .addClass("arrow")
+                      .addClass(feedback.vertical)
+                      .addClass(feedback.horizontal)
+                      .appendTo(this);
+                }
+            }
+        });
+    });
+    function sortFlights(sortCriteria) {
+        $("#sortBy").val(sortCriteria);
+        $("#searchWithSortAndFilter").submit();
+    }
+    function filterFlights() {
+        var selectedAirlines =
+            $("input[name='selectedairline']:checked")
+                .map(function() {
+                    return this.value;
+                })
+                .get()
+                .join(',');
+        $("#filterAirlines").val($.trim(selectedAirlines));
+        $("#sortBy").val($("#sortCriteria").val());
+        $("#searchWithSortAndFilter").submit();
+    }
+    function bookFlight(flightId) {
+        $("#flightBooked").val(flightId);
+        $("#bookflight").submit();
+    }
+    /*]]>*/
+
+    </script>
+</div>
+</body>
+</html>

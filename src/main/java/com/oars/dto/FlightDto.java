@@ -1,19 +1,21 @@
 package com.oars.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 
 @Data
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 public class FlightDto {
     private Long id;
-    private Date travelDate;
-    private Time departureTime;
-    private Time arrivalTime;
+    private LocalDate travelDate;
+    private LocalTime departureTime;
+    private LocalTime arrivalTime;
     private AirportDto departureFrom;
     private AirportDto arrivalAt;
     private Integer businessClassFare;

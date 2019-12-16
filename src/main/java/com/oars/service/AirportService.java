@@ -2,7 +2,11 @@ package com.oars.service;
 
 import com.oars.dto.AirportDto;
 
+import java.util.List;
+
 public interface AirportService {
+
+    List<AirportDto> getAllAirport();
 
     AirportDto createAirport(AirportDto airportDto);
 

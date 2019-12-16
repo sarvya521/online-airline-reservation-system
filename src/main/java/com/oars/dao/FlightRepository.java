@@ -5,27 +5,28 @@ import com.oars.entity.Flight;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface FlightRepository extends JpaRepository<Flight, Long> {
 
-    List<Flight> findAllByTravelDateAndDepartureFrom(Date travelDate, Airport departureFrom);
+    List<Flight> findByTravelDateAndDepartureFromAndArrivalAt(LocalDate travelDate, Airport departureFrom,
+                                                              Airport arrivalAt);
 
-    List<Flight> findAllByBusinessClassFareBetween(int from, int to);
+    List<Flight> findByBusinessClassFareBetween(int from, int to);
 
-    List<Flight> findAllByFirstclassFareBetween(int from, int to);
+    List<Flight> findByFirstclassFareBetween(int from, int to);
 
-    List<Flight> findAllByEconomyClassFareBetween(int from, int to);
+    List<Flight> findByEconomyClassFareBetween(int from, int to);
 
-    List<Flight> findAllByAirline(String airline);
+    List<Flight> findByAirline(String airline);
 
-    List<Flight> findAllByAirlineOrBusinessClassFareBetween(String airline, int from, int to);
+    List<Flight> findByAirlineOrBusinessClassFareBetween(String airline, int from, int to);
 
-    List<Flight> findAllByAirlineOrFirstclassFareBetween(String airline, int from, int to);
+    List<Flight> findByAirlineOrFirstclassFareBetween(String airline, int from, int to);
 
-    List<Flight> findAllByAirlineOrEconomyClassFareBetween(String airline, int from, int to);
+    List<Flight> findByAirlineOrEconomyClassFareBetween(String airline, int from, int to);
 
-    List<Flight> findAllByDepartureFromOrArrivalAt(Airport departureFrom, Airport arrivalAt);
+    List<Flight> findByDepartureFromOrArrivalAt(Airport departureFrom, Airport arrivalAt);
 }

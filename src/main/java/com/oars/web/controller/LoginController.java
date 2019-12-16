@@ -1,7 +1,9 @@
 package com.oars.web.controller;
 
 import com.oars.constant.Role;
+import com.oars.dto.AirportDto;
 import com.oars.dto.UserDto;
+import com.oars.service.AirportService;
 import com.oars.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Objects;
 
 @Log4j2
@@ -22,9 +25,31 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AirportService airportService;
+
     @GetMapping("/")
     public ModelAndView welcome() {
         return new ModelAndView("login");
+    }
+
+    @GetMapping("/home")
+    public ModelAndView customerHome() {
+        List<AirportDto> airports = airportService.getAllAirport();
+        ModelAndView mav = new ModelAndView("customerdashboard");
+        mav.addObject("sources", airports);
+        mav.addObject("destinations", airports);
+        return mav;
+    }
+
+    @GetMapping("/agenthome")
+    public ModelAndView adminHome() {
+        return new ModelAndView("admindashboard");
+    }
+
+    @GetMapping("/agenthome")
+    public ModelAndView agentHome() {
+        return new ModelAndView("agentdashboard");
     }
 
     @PostMapping("/checkLogin")
@@ -38,14 +63,24 @@ public class LoginController {
             String lastName = userDto.getLastName();
             String role = userDto.getRole();
             request.getSession().setAttribute("userId", userId);
-            request.getSession().setAttribute("emailId", email);
+            request.getSession().setAttribute("email", email);
             request.getSession().setAttribute("firstName", firstName);
             request.getSession().setAttribute("lastName", lastName);
             request.getSession().setAttribute("role", role);
             log.info("Session saved: " + firstName + " " + lastName);
-            return new ModelAndView("homepage", "message", "Logged in successfully!");
+            if (Objects.equals(Role.ADMIN.name(), role)) {
+                return new ModelAndView("admindashboard");
+            } else if (Objects.equals(Role.CUSTOMER_REPRESENTATIVE.name(), role)) {
+                return new ModelAndView("agentdashboard");
+            } else {
+                List<AirportDto> airports = airportService.getAllAirport();
+                ModelAndView mav = new ModelAndView("customerdashboard");
+                mav.addObject("sources", airports);
+                mav.addObject("destinations", airports);
+                return mav;
+            }
         } else {
-            String message = "Please enter correct credentials";
+            String message = "Login failed. Please enter correct credentials";
             return new ModelAndView("unsuccessfulLogin", "message", message);
         }
     }
@@ -55,7 +90,7 @@ public class LoginController {
         return new ModelAndView("register");
     }
 
-    @PostMapping("/registrationDetails")
+    @PostMapping("/register")
     public ModelAndView registrationDetails(HttpServletRequest request, HttpServletResponse res) {
         String email = request.getParameter("emailAddress");
         String firstName = request.getParameter("firstName");
@@ -76,12 +111,16 @@ public class LoginController {
         } else {
             userDto = userService.createUser(userDto);
             request.getSession().setAttribute("userId", userDto.getId());
-            request.getSession().setAttribute("emailId", email);
+            request.getSession().setAttribute("email", email);
             request.getSession().setAttribute("firstName", firstName);
             request.getSession().setAttribute("lastName", lastName);
             request.getSession().setAttribute("role", role);
             log.info("User registered successfully");
-            return new ModelAndView("homepage", "message", "registered successfully!");
+            List<AirportDto> airports = airportService.getAllAirport();
+            ModelAndView mav = new ModelAndView("customerdashboard");
+            mav.addObject("sources", airports);
+            mav.addObject("destinations", airports);
+            return mav;
         }
     }
 
@@ -90,6 +129,6 @@ public class LoginController {
                                HttpServletResponse response) {
         request.getSession().invalidate();
         log.info("Logged out...");
-        return new ModelAndView("homepage");
+        return new ModelAndView("login");
     }
 }

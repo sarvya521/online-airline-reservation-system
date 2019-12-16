@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Cancel Booking</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-theme.min.css}"/>
+    <style>
+        th {
+            text-align: center;
+        }
+
+    </style>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+</head>
+<body style="margin:10px">
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" data-target="#navbarCollapse"
+                    data-toggle="collapse" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand">Hi <span th:text="${session.firstName}"
+                                                      th:unless="${session == null}"></span></a>
+        </div>
+        <!-- Collection of nav links and other content for toggling -->
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#" th:href="@{/agenthome}">Home</a></li>
+                <li><a href="#" th:href="@{/airport/crud}">View/Add/Edit/Delete Airports</a></li>
+                <li><a href="#" th:href="@{/aircraft/crud}">View/Add/Edit/Delete Aircrafts</a></li>
+                <li><a href="#" th:href="@{/flight/crud}">View/Add/Edit/Delete Flights</a></li>
+                <li><a href="#" th:href="@{/user/customer/waiting}">View Waiting List</a></li>
+                <li><a href="#" th:href="@{/booking/customer/modify}">Modify Customer Booking</a></li>
+                <li><a href="#" th:href="@{/booking/agent/book}">Make Reservation For Customer</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div style="margin-top: 210px;">
+    Hello Agent
+</div>
+</body>
+</html>

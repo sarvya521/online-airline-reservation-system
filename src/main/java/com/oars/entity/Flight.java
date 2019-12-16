@@ -15,11 +15,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,15 +37,14 @@ public class Flight implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "travel_date")
-    private Date travelDate;
+    private LocalDate travelDate;
 
     @Column(name = "departure_time")
-    private Time departureTime;
+    private LocalTime departureTime;
 
     @Column(name = "arrival_time")
-    private Time arrivalTime;
+    private LocalTime arrivalTime;
 
     @ManyToOne
     @JoinColumn(name = "departure_from")

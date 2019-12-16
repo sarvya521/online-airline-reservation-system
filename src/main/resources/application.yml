@@ -2,16 +2,12 @@
 spring:
   application:
     name: oars
-  mvc:
-    view:
-      prefix: /WEB-INF/views/
-      suffix: .jsp
-      staticPathPattern: /resources/**
   datasource:
     url: jdbc:mysql://localhost:3306/oars
     username: root
     password: root
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
+    initialization-mode: always
     hikari:
       minimumIdle: 2
       maximumPoolSize: 4

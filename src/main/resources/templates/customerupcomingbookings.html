@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Upcoming Bookings</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-theme.min.css}"/>
+    <style>
+        th {
+            text-align: center;
+        }
+
+    </style>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+</head>
+
+<body style="margin:10px">
+<nav role="navigation" class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" data-target="#navbarCollapse"
+                    data-toggle="collapse" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="#" class="navbar-brand">Hi <span th:text="${session.firstName}"
+                                                      th:unless="${session == null}"></span></a>
+        </div>
+        <!-- Collection of nav links and other content for toggling -->
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="#" th:href="@{/home}">Home</a></li>
+                <li><a href="#" th:href="@{/booking/user/pastBookings}">View Past Bookings</a></li>
+                <li class="active"><a href="#" th:href="@{/booking/user/upcomingBookings}">View Upcoming Bookings</a>
+                </li>
+                <li><a href="#" th:href="@{/booking/user/cancelBooking}">Cancel Booking</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<p th:each="error : ${errors}" th:text="${error}" style="color: red; font-weight: bold; margin-top: 80px;"/>
+<div th:if="${upcomingBookings} != null" style="margin-top: 80px;">
+    <table width="70%" border="1" style="border: 1px solid black; padding: 10px; text-align: center;">
+        <tr>
+            <th>PNR</th>
+            <th>Booking Date</th>
+            <th>Travel Date</th>
+            <th>Class</th>
+            <th>Airline</th>
+            <th>Cost</th>
+            <th>Status</th>
+        </tr>
+        <tr th:each="booking : ${upcomingBookings}">
+            <td th:text="${booking.pnr}"></td>
+            <td th:text="${booking.bookingDate}"></td>
+            <td th:text="${booking.travelDate}"></td>
+            <td th:text="${booking.seatClass}"></td>
+            <td th:text="${booking.airline}"></td>
+            <td th:text="${booking.cost}"></td>
+            <td th:text="${booking.status}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class AircraftServiceImpl implements AircraftService {
 
@@ -26,6 +29,12 @@ public class AircraftServiceImpl implements AircraftService {
 
     public AircraftServiceImpl(PlatformTransactionManager transactionManager) {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
+    }
+
+    @Override
+    public List<AircraftDto> getAllAircraft() {
+        List<Aircraft> aircrafts = aircraftRepository.findAll();
+        return aircrafts.stream().map(aircraft -> aircraftMapper.convertToDto(aircraft)).collect(Collectors.toList());
     }
 
     @Override

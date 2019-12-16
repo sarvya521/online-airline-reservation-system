@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,10 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -38,13 +37,11 @@ public class Booking implements Serializable {
     @Column(name = "pnr")
     private String pnr;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "booking_date")
-    private Date bookingDate;
+    private LocalDate bookingDate;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "travel_date")
-    private Date travelDate;
+    private LocalDate travelDate;
 
     @Column(name = "seat_class")
     private String seatClass;
@@ -55,7 +52,10 @@ public class Booking implements Serializable {
     @Column(name = "airline")
     private String airline;
 
-    @ManyToOne
+    @Column(name = "status")
+    private String status;
+
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "fk_flight_id")
     private Flight flight;
 

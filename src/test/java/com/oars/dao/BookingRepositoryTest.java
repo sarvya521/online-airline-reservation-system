@@ -16,9 +16,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -68,12 +68,12 @@ class BookingRepositoryTest {
         arrivalAt.setAlias("bbb");
         arrivalAt = testEntityManager.persistAndFlush(arrivalAt);
 
-        Date date = new Date();
+        LocalDate date = LocalDate.now();
 
         Flight flight = new Flight();
         flight.setTravelDate(date);
-        flight.setDepartureTime(new Time(date.getTime()));
-        flight.setArrivalTime(new Time(date.getTime()));
+        flight.setDepartureTime(LocalTime.now());
+        flight.setArrivalTime(LocalTime.now());
         flight.setDepartureFrom(departureFrom);
         flight.setArrivalAt(arrivalAt);
         flight.setBusinessClassFare(100);
@@ -144,12 +144,12 @@ class BookingRepositoryTest {
         arrivalAt.setAlias("bbb");
         arrivalAt = testEntityManager.persistAndFlush(arrivalAt);
 
-        Date date = new Date();
+        LocalDate date = LocalDate.now();
 
         Flight flight1 = new Flight();
         flight1.setTravelDate(date);
-        flight1.setDepartureTime(new Time(date.getTime()));
-        flight1.setArrivalTime(new Time(date.getTime()));
+        flight1.setDepartureTime(LocalTime.now());
+        flight1.setArrivalTime(LocalTime.now());
         flight1.setDepartureFrom(departureFrom);
         flight1.setArrivalAt(arrivalAt);
         flight1.setBusinessClassFare(100);
@@ -161,8 +161,8 @@ class BookingRepositoryTest {
 
         Flight flight2 = new Flight();
         flight2.setTravelDate(date);
-        flight2.setDepartureTime(new Time(date.getTime()));
-        flight2.setArrivalTime(new Time(date.getTime()));
+        flight2.setDepartureTime(LocalTime.now());
+        flight2.setArrivalTime(LocalTime.now());
         flight2.setDepartureFrom(departureFrom);
         flight2.setArrivalAt(arrivalAt);
         flight2.setBusinessClassFare(100);

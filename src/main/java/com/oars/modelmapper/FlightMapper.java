@@ -1,6 +1,8 @@
 package com.oars.modelmapper;
 
+import com.oars.dto.ActiveFlightDto;
 import com.oars.dto.FlightDto;
+import com.oars.dto.FlightRevenueDto;
 import com.oars.entity.Flight;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -37,6 +39,7 @@ public class FlightMapper {
                 skip(destination.getAircraft());
             }
         });
+
     }
 
     /**
@@ -47,6 +50,14 @@ public class FlightMapper {
      */
     public FlightDto convertToDto(Flight flight) {
         return modelMapper.map(flight, FlightDto.class);
+    }
+
+    public ActiveFlightDto convertToActiveFlightDto(Flight flight) {
+        return modelMapper.map(flight, ActiveFlightDto.class);
+    }
+
+    public FlightRevenueDto convertToFlightRevenueDto(Flight flight) {
+        return modelMapper.map(flight, FlightRevenueDto.class);
     }
 
     /**
@@ -68,4 +79,6 @@ public class FlightMapper {
     public void mergeToEntity(FlightDto flightDto, Flight flight) {
         modelMapper.map(flightDto, flight);
     }
+
+
 }
