@@ -17,8 +17,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Controller
@@ -38,6 +40,10 @@ public class AirportController {
         }
         ModelAndView mav = new ModelAndView("airport");
         List<AirportDto> airports = airportService.getAllAirport();
+        airports =
+                airports.stream()
+                        .sorted(Comparator.comparing(AirportDto::getId).reversed())
+                        .collect(Collectors.toList());
         mav.addObject("airports", airports);
         return mav;
     }
