@@ -7,10 +7,14 @@
     <title>Customer CRUD</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery-ui-1.12.1.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/jquery.timepicker.min-1.3.5.css}">
     <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery-ui-1.12.1.js}"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.timepicker.min-1.3.5.js}"></script>
     <style type="text/css">
     body {
         color: #404E67;
@@ -107,19 +111,19 @@
         }
     </script>
     <script type="text/javascript">
-var departureFromSelectHtml = '<select type="text" class="form-control" name="departureFrom" id="departureFrom">';
+var departureFromSelectHtml = '<select type="text" class="form-control" name="departureFrom">';
 $.each(airports, function(i, airport){
 departureFromSelectHtml += '<option value='+airport.id+'>'+airport.name+'('+airport.alias+')</option>';
 });
 departureFromSelectHtml += '</select>';
 
-var arrivalAtSelectHtml = '<select type="text" class="form-control" name="arrivalAt" id="arrivalAt">';
+var arrivalAtSelectHtml = '<select type="text" class="form-control" name="arrivalAt">';
 $.each(airports, function(i, airport){
 arrivalAtSelectHtml += '<option value='+airport.id+'>'+airport.name+'('+airport.alias+')</option>';
 });
 arrivalAtSelectHtml += '</select>';
 
-var aircraftSelectHtml = '<select type="text" class="form-control" name="aircraft" id="aircraft">';
+var aircraftSelectHtml = '<select type="text" class="form-control" name="aircraft">';
 $.each(aircrafts, function(i, aircraft){
 aircraftSelectHtml += '<option value='+aircraft.id+'>'+aircraft.model+'('+aircraft.code+')</option>';
 });
@@ -136,27 +140,66 @@ $(document).ready(function(){
 		$(this).attr("disabled", "disabled");
 		var index = $("table tbody tr:last-child").index();
         var row = '<tr>' +
-            '<td><input type="text" class="form-control" name="travelDate" id="travelDate" onkeydown="return false;"></td>' +
-			'<td><input type="text" class="form-control" name="departureTime" id="departureTime"></td>' +
-			'<td><input type="text" class="form-control" name="arrivalTime" id="arrivalTime"></td>' +
+            '<td><input type="text" class="form-control" name="travelDate" id="travelDateSelector" ' +
+            'onkeydown="return false;"></td>' +
+			'<td><input type="text" class="form-control" name="departureTime" id="departureTimeSelector" '+
+			'onkeydown="return false;"></td>' +
+			'<td><input type="text" class="form-control" name="arrivalTime" id="arrivalTimeSelector" '+
+			'onkeydown="return false;"></td>' +
 			'<td>' + departureFromSelectHtml + '</td>' +
 			'<td>' + arrivalAtSelectHtml + '</td>' +
-			'<td><input type="text" class="form-control" name="businessClassFare" id="businessClassFare"></td>' +
-			'<td><input type="text" class="form-control" name="firstclassFare" id="firstclassFare"></td>' +
-			'<td><input type="text" class="form-control" name="economyClassFare" id="economyClassFare"></td>' +
-			'<td><input type="text" class="form-control" name="airline" id="airline"></td>' +
+			'<td><input type="text" class="form-control" name="firstclassFare"></td>' +
+			'<td><input type="text" class="form-control" name="businessClassFare"></td>' +
+			'<td><input type="text" class="form-control" name="economyClassFare"></td>' +
+			'<td><input type="text" class="form-control" name="airline"></td>' +
 			'<td>' + aircraftSelectHtml + '</td>' +
 			'<td><a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
         '</tr>';
-    	$("table").append(row);
-		$("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+        $('table > tbody > tr:first').before(row);
+        $("table tbody tr").eq(0).find(".add, .edit").toggle();
         $('[data-toggle="tooltip"]').tooltip();
+        $( "#travelDateSelector" ).datepicker({
+            dateFormat: 'yy-mm-dd',
+            yearRange: '2019:2020',
+            minDate: new Date()
+        });
+        $('#departureTimeSelector').timepicker({
+            timeFormat: 'HH:mm',
+            interval: 5,
+            minTime: '00:00',
+            maxTime: '23:55',
+            defaultTime: '00:00',
+            startTime: '00:00',
+            dynamic: false,
+            dropdown: true,
+            scrollbar: true
+        });
+        $('#arrivalTimeSelector').timepicker({
+            timeFormat: 'HH:mm',
+            interval: 5,
+            minTime: '00:00',
+            maxTime: '23:55',
+            defaultTime: '00:00',
+            startTime: '00:00',
+            dynamic: false,
+            dropdown: true,
+            scrollbar: true
+        });
     });
 	// Add row on add button click
 	$(document).on("click", ".add", function(){
 		var empty = false;
-		var input = $(this).parents("tr").find('input[type="text"]');
-        input.each(function(){
+		var textInputs = $(this).parents("tr").find('input[type="text"]');
+        textInputs.each(function(){
+			if(!$(this).val()){
+				$(this).addClass("error");
+				empty = true;
+			} else{
+                $(this).removeClass("error");
+            }
+		});
+		var selectInputs = $(this).parents("tr").find('select');
+		selectInputs.each(function(){
 			if(!$(this).val()){
 				$(this).addClass("error");
 				empty = true;
@@ -166,8 +209,7 @@ $(document).ready(function(){
 		});
 		$(this).parents("tr").find(".error").first().focus();
 		if(!empty){
-			input.each(function(){
-				$(this).parent("td").html($(this).val());
+			textInputs.each(function() {
 				if($(this).prop("name") == "travelDate") {
 					$("#travelDate").val($(this).val());
 				}
@@ -177,23 +219,25 @@ $(document).ready(function(){
 				else if($(this).prop("name") == "arrivalTime") {
 					$("#arrivalTime").val($(this).val());
 				}
-				else if($(this).prop("name") == "departureFrom") {
-					$("#departureFrom").val($(this).val());
-				}
-				else if($(this).prop("name") == "arrivalAt") {
-					$("#arrivalAt").val($(this).val());
+				else if($(this).prop("name") == "firstclassFare") {
+					$("#firstclassFare").val($(this).val());
 				}
 				else if($(this).prop("name") == "businessClassFare") {
 					$("#businessClassFare").val($(this).val());
-				}
-				else if($(this).prop("name") == "firstclassFare") {
-					$("#firstclassFare").val($(this).val());
 				}
 				else if($(this).prop("name") == "economyClassFare") {
 					$("#economyClassFare").val($(this).val());
 				}
 				else if($(this).prop("name") == "airline") {
 					$("#airline").val($(this).val());
+				}
+			});
+			selectInputs.each(function() {
+				if($(this).prop("name") == "departureFrom") {
+					$("#departureFrom").val($(this).val());
+				}
+				else if($(this).prop("name") == "arrivalAt") {
+					$("#arrivalAt").val($(this).val());
 				}
 				else if($(this).prop("name") == "aircraft") {
 					$("#aircraft").val($(this).val());
@@ -219,6 +263,42 @@ $(document).ready(function(){
                 $(this).html(aircraftSelectHtml);
                 $(this).find("select").val($(this).attr("paramvalue"));
                 $(this).find("select").removeProp("id");
+            } else if($(this).attr("param") == 'travelDate') {
+                $(this).html('<input type="text" class="form-control" name="travelDate" id="travelDateSelector" ' +
+                'value="' + $(this).text() +'" onkeydown="return false;">');
+                $( "#travelDateSelector" ).datepicker({
+                    dateFormat: 'yy-mm-dd',
+                    yearRange: '2019:2020',
+                    minDate: new Date()
+                });
+            } else if($(this).attr("param") == 'departureTime') {
+                $(this).html('<input type="text" class="form-control" name="departureTime" id="departureTimeSelector" ' +
+                'value="' + $(this).text() +'" onkeydown="return false;">');
+                $('#departureTimeSelector').timepicker({
+                    timeFormat: 'HH:mm',
+                    interval: 5,
+                    minTime: '00:00',
+                    maxTime: '23:55',
+                    defaultTime: $(this).text(),
+                    startTime: '00:00',
+                    dynamic: false,
+                    dropdown: true,
+                    scrollbar: true
+                });
+            } else if($(this).attr("param") == 'arrivalTime') {
+                $(this).html('<input type="text" class="form-control" name="arrivalTime" id="arrivalTimeSelector" ' +
+                'value="' + $(this).text() +'" onkeydown="return false;">');
+                $('#arrivalTimeSelector').timepicker({
+                    timeFormat: 'HH:mm',
+                    interval: 5,
+                    minTime: '00:00',
+                    maxTime: '23:55',
+                    defaultTime: $(this).text(),
+                    startTime: '00:00',
+                    dynamic: false,
+                    dropdown: true,
+                    scrollbar: true
+                });
             } else {
                 $(this).html('<input type="text" class="form-control" name="' + $(this).attr("param") + '" value="' + $(this).text() + '">');
             }
@@ -242,11 +322,11 @@ $(document).ready(function(){
             else if($(this).prop("name") == "arrivalAt") {
                 $("#arrivalAt").val($(this).val());
             }
-            else if($(this).prop("name") == "businessClassFare") {
-                $("#businessClassFare").val($(this).val());
-            }
             else if($(this).prop("name") == "firstclassFare") {
                 $("#firstclassFare").val($(this).val());
+            }
+            else if($(this).prop("name") == "businessClassFare") {
+                $("#businessClassFare").val($(this).val());
             }
             else if($(this).prop("name") == "economyClassFare") {
                 $("#economyClassFare").val($(this).val());
@@ -266,9 +346,9 @@ $(document).ready(function(){
 	    $(this).parents("tr").find("input").each(function(){
 		    if($(this).prop("name") == "flightId") {
                 $("#flight").val($(this).val());
+                $("#deleteFlight").submit();
             }
 		});
-		$("#deleteFlight").submit();
         $(this).parents("tr").remove();
 		$(".add-new").removeAttr("disabled");
     });
@@ -283,8 +363,8 @@ $(document).ready(function(){
     <input type="hidden" name="arrivalTime" id="arrivalTime"/>
     <input type="hidden" name="departureFrom" id="departureFrom"/>
     <input type="hidden" name="arrivalAt" id="arrivalAt"/>
-    <input type="hidden" name="businessClassFare" id="businessClassFare"/>
     <input type="hidden" name="firstclassFare" id="firstclassFare"/>
+    <input type="hidden" name="businessClassFare" id="businessClassFare"/>
     <input type="hidden" name="economyClassFare" id="economyClassFare"/>
     <input type="hidden" name="airline" id="airline"/>
     <input type="hidden" name="aircraft" id="aircraft"/>
@@ -349,8 +429,8 @@ $(document).ready(function(){
                 <th>ArrivalTime</th>
                 <th>DepartureFrom</th>
                 <th>ArrivalAt</th>
-                <th>BusinessClassFare</th>
                 <th>FirstClassFare</th>
+                <th>BusinessClassFare</th>
                 <th>EconomyClassFare</th>
                 <th>Airline</th>
                 <th>Aircraft</th>
@@ -370,19 +450,19 @@ $(document).ready(function(){
                 <td th:text="${flight.arrivalTime}" param="arrivalTime"></td>
                 <input type="hidden" name="arrivalTime" th:value="${flight.arrivalTime}"/>
 
-                <td th:text="${flight.departureFrom.id}" param="departureFrom"
-                    th:attr="paramvalue='\'' + #{flight.departureFrom.id} + '\''"></td>
-                <input type="hidden" name="departureFrom" th:value="${flight.departureFrom.name} + ' (' + ${flight.departureFrom.alias} + ')'"/>
+                <td th:text="${flight.departureFrom.name} + ' (' + ${flight.departureFrom.alias} + ')'" param="departureFrom"
+                    th:attr="paramvalue=${flight.departureFrom.id}"></td>
+                <input type="hidden" name="departureFrom" th:value="${flight.departureFrom.id}"/>
 
-                <td th:text="${flight.arrivalAt.id}" param="arrivalAt"
-                    th:attr="paramvalue='\'' + #{flight.arrivalAt.id} + '\''"></td>
-                <input type="hidden" name="arrivalAt" th:value="${flight.arrivalAt.name} + ' (' + ${flight.arrivalAt.alias} + ')'"/>
-
-                <td th:text="${flight.businessClassFare}" param="businessClassFare"></td>
-                <input type="hidden" name="businessClassFare" th:value="${flight.businessClassFare}"/>
+                <td th:text="${flight.arrivalAt.name} + ' (' + ${flight.arrivalAt.alias} + ')'" param="arrivalAt"
+                    th:attr="paramvalue=${flight.arrivalAt.id}"></td>
+                <input type="hidden" name="arrivalAt" th:value="${flight.arrivalAt.id}"/>
 
                 <td th:text="${flight.firstclassFare}" param="firstclassFare"></td>
                 <input type="hidden" name="firstclassFare" th:value="${flight.firstclassFare}"/>
+
+                <td th:text="${flight.businessClassFare}" param="businessClassFare"></td>
+                <input type="hidden" name="businessClassFare" th:value="${flight.businessClassFare}"/>
 
                 <td th:text="${flight.economyClassFare}" param="economyClassFare"></td>
                 <input type="hidden" name="economyClassFare" th:value="${flight.economyClassFare}"/>
@@ -390,8 +470,8 @@ $(document).ready(function(){
                 <td th:text="${flight.airline}" param="airline"></td>
                 <input type="hidden" name="airline" th:value="${flight.airline}"/>
 
-                <td th:text="${flight.aircraft.id}" param="aircraft"
-                    th:attr="paramvalue='\'' + #{flight.aircraft.id} + '\''"></td>
+                <td th:text="${flight.aircraft.model} + ' (' + ${flight.aircraft.code} + ')'" param="aircraft"
+                    th:attr="paramvalue=${flight.aircraft.id}"></td>
                 <input type="hidden" name="aircraft" th:value="${flight.aircraft.id}"/>
 
                 <td>

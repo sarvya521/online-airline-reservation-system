@@ -62,6 +62,10 @@ public class FlightController {
         List<String> errors = new ArrayList<>();
         ModelAndView mav = new ModelAndView("flight");
         List<FlightDto> flights = flightService.getAllFlights();
+        flights =
+                flights.stream()
+                        .sorted(Comparator.comparing(FlightDto::getId).reversed())
+                        .collect(Collectors.toList());
         mav.addObject("flights", flights);
         List<AirportDto> airports = airportService.getAllAirport();
         if (airports.isEmpty()) {

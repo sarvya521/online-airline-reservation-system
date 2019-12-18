@@ -34,6 +34,9 @@ public class FlightMapper {
                 Flight>() {
             @Override
             protected void configure() {
+                skip(destination.getRemainingFirstclassSeats());
+                skip(destination.getRemainingBusinessSeats());
+                skip(destination.getRemainingEconomySeats());
                 skip(destination.getDepartureFrom());
                 skip(destination.getArrivalAt());
                 skip(destination.getAircraft());
@@ -77,7 +80,13 @@ public class FlightMapper {
      * @return {@link Flight }
      */
     public void mergeToEntity(FlightDto flightDto, Flight flight) {
-        modelMapper.map(flightDto, flight);
+        flight.setTravelDate(flightDto.getTravelDate());
+        flight.setDepartureTime(flightDto.getDepartureTime());
+        flight.setArrivalTime(flightDto.getArrivalTime());
+        flight.setFirstclassFare(flightDto.getFirstclassFare());
+        flight.setBusinessClassFare(flightDto.getBusinessClassFare());
+        flight.setEconomyClassFare(flightDto.getEconomyClassFare());
+        flight.setAirline(flightDto.getAirline());
     }
 
 

@@ -7,7 +7,7 @@
     <title>Customer CRUD</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
     <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
     <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
@@ -114,8 +114,8 @@ $(document).ready(function(){
             '<td><input type="text" class="form-control" name="alias" id="alias"></td>' +
 			'<td><a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
         '</tr>';
-    	$("table").append(row);
-		$("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+    	$('table > tbody > tr:first').before(row);
+		$("table tbody tr").eq(0).find(".add, .edit").toggle();
         $('[data-toggle="tooltip"]').tooltip();
     });
 	// Add row on add button click
@@ -133,7 +133,6 @@ $(document).ready(function(){
 		$(this).parents("tr").find(".error").first().focus();
 		if(!empty){
 			input.each(function(){
-				$(this).parent("td").html($(this).val());
                 if($(this).prop("name") == "name") {
                     $("#name").val($(this).val());
                 }
@@ -170,9 +169,9 @@ $(document).ready(function(){
 	    $(this).parents("tr").find("input").each(function(){
 		    if($(this).prop("name") == "airportId") {
                 $("#airport").val($(this).val());
+                $("#deleteAirport").submit();
             }
 		});
-		$("#deleteAirport").submit();
         $(this).parents("tr").remove();
 		$(".add-new").removeAttr("disabled");
     });

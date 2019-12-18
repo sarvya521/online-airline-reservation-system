@@ -93,12 +93,15 @@ public class FlightServiceImpl implements FlightService {
         Long id = flightDto.getId();
         Flight flight = flightRepository.findById(id).get();
         flightMapper.mergeToEntity(flightDto, flight);
-        Aircraft aircraft = aircraftRepository.findById(flight.getAircraft().getId()).get();
-        flight.setAircraft(aircraft);
-        Airport departureFrom = airportRepository.findById(flight.getDepartureFrom().getId()).get();
-        flight.setDepartureFrom(departureFrom);
-        Airport arrivalAt = airportRepository.findById(flight.getArrivalAt().getId()).get();
-        flight.setArrivalAt(arrivalAt);
+        if(!Objects.equals(flightDto.getAircraft().getId(), flight.getAircraft().getId())) {
+            flight.setAircraft(aircraftRepository.findById(flightDto.getAircraft().getId()).get());
+        }
+        if(!Objects.equals(flightDto.getDepartureFrom().getId(), flight.getDepartureFrom().getId())) {
+            flight.setDepartureFrom(airportRepository.findById(flightDto.getDepartureFrom().getId()).get());
+        }
+        if(!Objects.equals(flightDto.getArrivalAt().getId(), flight.getArrivalAt().getId())) {
+            flight.setArrivalAt(airportRepository.findById(flightDto.getArrivalAt().getId()).get());
+        }
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(TransactionStatus status) {
