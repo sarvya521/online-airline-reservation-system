@@ -43,4 +43,6 @@ public interface BookingService {
     List<AirlineRevenueDto> findAirlineSortedByHighestRevenue();
 
     List<FlightRevenueDto> findFlightsSortedByHighestRevenue();
+
+    List<BookingDto> getFlightWaitingList(Long flightId);
 }

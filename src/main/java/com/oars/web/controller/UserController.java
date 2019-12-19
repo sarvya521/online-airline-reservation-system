@@ -1,7 +1,11 @@
 package com.oars.web.controller;
 
 import com.oars.constant.Role;
+import com.oars.dto.BookingDto;
+import com.oars.dto.FlightDto;
 import com.oars.dto.UserDto;
+import com.oars.service.BookingService;
+import com.oars.service.FlightService;
 import com.oars.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +17,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +37,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FlightService flightService;
+
+    @Autowired
+    private BookingService bookingService;
 
     @GetMapping("/customer/crud")
     public ModelAndView crudCustomer(HttpServletRequest request, HttpServletResponse res) {
@@ -154,6 +166,40 @@ public class UserController {
         Long customerId = Long.parseLong(request.getParameter("userId"));
         userService.deleteUser(customerId);
         return crudAgent(request, res);
+    }
+
+    @RequestMapping(value = "/customer/flight/waiting", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView getFlightWaitingList(HttpServletRequest request, HttpServletResponse res) {
+        String role = (String) request.getSession().getAttribute("role");
+        if (!Objects.equals(Role.CUSTOMER_REPRESENTATIVE.name(), role)) {
+            ModelAndView mav = new ModelAndView("error");
+            mav.addObject("message", "Restricted Access. Or Your Session is expired. Try login again");
+            return mav;
+        }
+        ModelAndView mav = new ModelAndView("flightwaitinglist");
+        List<String> errors = new ArrayList<>();
+        List<FlightDto> flights = flightService.getAllFlights();
+        if (flights.isEmpty()) {
+            errors.add("No flights found");
+            mav.addObject("errors", errors);
+            return mav;
+        }
+        mav.addObject("flights", flights);
+        String flightIdStr = request.getParameter("flight");
+        if (Objects.isNull(flightIdStr)) {
+            return mav;
+        }
+        Long flightId = Long.parseLong(flightIdStr);
+        List<BookingDto> bookings = bookingService.getFlightWaitingList(flightId);
+        if (bookings.isEmpty()) {
+            errors.add("No bookings found for this flight");
+            mav.addObject("errors", errors);
+            return mav;
+        }
+
+        mav.addObject("bookings", bookings);
+        mav.addObject("selectedFlight", flightId);
+        return mav;
     }
 
     @PostMapping

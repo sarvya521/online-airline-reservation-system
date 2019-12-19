@@ -232,6 +232,8 @@ public class FlightController {
         return new ModelAndView("homepage", "message", "flight deleted successfully!");
     }
 
+
+
     @RequestMapping(value = "/airport", method = {RequestMethod.GET, RequestMethod.POST})
     public ModelAndView getFlightsForAirport(HttpServletRequest request, HttpServletResponse res) {
         String role = (String) request.getSession().getAttribute("role");

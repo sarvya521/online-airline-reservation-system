@@ -25,6 +25,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByAirline(String airline);
 
+    List<Booking> findByFlightAndStatus(Flight flight, String status);
+
     public static interface CustomerRevenue {
         User getUser();
 

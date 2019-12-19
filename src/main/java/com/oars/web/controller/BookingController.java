@@ -331,7 +331,7 @@ public class BookingController {
         List<String> errors = new ArrayList<>();
         List<FlightDto> flights = flightService.getAllFlights();
         if (flights.isEmpty()) {
-            errors.add("No bookings found for this flight");
+            errors.add("No flights found");
             mav.addObject("errors", errors);
             return mav;
         }
@@ -343,7 +343,7 @@ public class BookingController {
         Long flightId = Long.parseLong(flightIdStr);
         List<BookingDto> bookings = bookingService.findAllByFlightId(flightId);
         if (bookings.isEmpty()) {
-            errors.add("No bookings found for this user");
+            errors.add("No bookings found for this flight");
             mav.addObject("errors", errors);
             return mav;
         }

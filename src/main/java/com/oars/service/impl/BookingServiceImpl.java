@@ -38,7 +38,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -272,6 +274,20 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = bookingRepository.findByFlight(flight);
         return bookings.stream()
                 .map(this::prepareBookingDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookingDto> getFlightWaitingList(Long flightId) {
+        Flight flight = flightRepository.findById(flightId).get();
+        List<Booking> bookings = bookingRepository.findByFlightAndStatus(flight, BookingStatus.WAITING.name());
+        final Map<String, Integer> SEAT_CLASS_ORDER = new LinkedHashMap<>();
+        SEAT_CLASS_ORDER.put(SearchFlightConstants.SeatPreference.FIRST.name(), 1);
+        SEAT_CLASS_ORDER.put(SearchFlightConstants.SeatPreference.BUSINESS.name(), 2);
+        SEAT_CLASS_ORDER.put(SearchFlightConstants.SeatPreference.ECONOMY.name(), 3);
+        return bookings.stream()
+                .map(this::prepareBookingDto)
+                .sorted(Comparator.comparing(b -> SEAT_CLASS_ORDER.get(b.getSeatClass())))
                 .collect(Collectors.toList());
     }
 
