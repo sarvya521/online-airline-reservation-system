@@ -3,6 +3,7 @@ package com.oars.service.impl;
 import com.oars.constant.SearchFlightConstants;
 import com.oars.dao.AircraftRepository;
 import com.oars.dao.AirportRepository;
+import com.oars.dao.BookingRepository;
 import com.oars.dao.FlightRepository;
 import com.oars.dto.AircraftDto;
 import com.oars.dto.AirportDto;
@@ -10,6 +11,7 @@ import com.oars.dto.FlightDto;
 import com.oars.dto.SearchFlightDto;
 import com.oars.entity.Aircraft;
 import com.oars.entity.Airport;
+import com.oars.entity.Booking;
 import com.oars.entity.Flight;
 import com.oars.modelmapper.AircraftMapper;
 import com.oars.modelmapper.AirportMapper;
@@ -37,6 +39,7 @@ public class FlightServiceImpl implements FlightService {
     @Autowired
     private FlightRepository flightRepository;
 
+
     @Autowired
     private FlightMapper flightMapper;
 
@@ -51,6 +54,9 @@ public class FlightServiceImpl implements FlightService {
 
     @Autowired
     private AirportMapper airportMapper;
+
+    @Autowired
+    private BookingRepository bookingRepository;
 
     private final TransactionTemplate transactionTemplate;
 
@@ -146,6 +152,17 @@ public class FlightServiceImpl implements FlightService {
         return flights;
     }
 
+    @Override
+    public List<FlightDto> search(Long bookingId, LocalDate travelDate,
+                                  SearchFlightConstants.SeatPreference seatPreference) {
+        Booking booking = bookingRepository.findById(bookingId).get();
+        SearchFlightDto searchFlightDto = new SearchFlightDto();
+        searchFlightDto.setSeatPreference(seatPreference);
+        searchFlightDto.setTravelDate(travelDate);
+        searchFlightDto.setSourceAirportId(booking.getFlight().getDepartureFrom().getId());
+        searchFlightDto.setDestinationAirportId(booking.getFlight().getArrivalAt().getId());
+        return search(searchFlightDto, false);
+    }
 
     @Override
     @Transactional

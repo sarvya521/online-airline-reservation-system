@@ -18,5 +18,7 @@ public interface UserService {
 
     List<UserDto> getAllCustomers();
 
+    List<UserDto> getAllCustomersWithBooking();
+
     List<UserDto> getAllAgents();
 }

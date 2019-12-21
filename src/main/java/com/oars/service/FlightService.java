@@ -1,5 +1,6 @@
 package com.oars.service;
 
+import com.oars.constant.SearchFlightConstants;
 import com.oars.dto.AirportDto;
 import com.oars.dto.FlightDto;
 import com.oars.dto.SearchFlightDto;
@@ -41,4 +42,6 @@ public interface FlightService {
     List<String> getAirlines(List<FlightDto> flights);
 
     List<FlightDto> getAllFlights();
+
+    List<FlightDto> search(Long bookingId, LocalDate travelDate, SearchFlightConstants.SeatPreference seatPreference);
 }

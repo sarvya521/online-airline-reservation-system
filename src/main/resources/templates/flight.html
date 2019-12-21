@@ -22,10 +22,8 @@
 		font-family: 'Open Sans', sans-serif;
 	}
 	.table-wrapper {
-<!--		width: 700px;-->
 		margin: 30px auto;
         background: #fff;
-<!--        padding: 20px;-->
         box-shadow: 0 1px 1px rgba(0,0,0,.05);
     }
     .table-title {
@@ -401,7 +399,7 @@ $(document).ready(function(){
                 <li><a href="#" th:href="@{/aircraft/crud}">View/Add/Edit/Delete Aircrafts</a></li>
                 <li class="active"><a href="#" th:href="@{/flight/crud}">View/Add/Edit/Delete Flights</a></li>
                 <li><a href="#" th:href="@{/user/customer/flight/waiting}">View Waiting List</a></li>
-                <li><a href="#" th:href="@{/booking/customer/modify}">Modify Customer Booking</a></li>
+                <li><a href="#" th:href="@{/booking/agent/modify}">Modify Customer Booking</a></li>
                 <li><a href="#" th:href="@{/booking/agent/book}">Make Reservation For Customer</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

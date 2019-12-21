@@ -42,6 +42,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> getAllCustomersWithBooking() {
+        List<User> users = userRepository.findByRoleAndBookingsNotEmpty(Role.CUSTOMER.name());
+        return users.stream()
+                .map(user -> userMapper.convertToDto(user))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<UserDto> getAllAgents() {
         List<User> users = userRepository.findByRole(Role.CUSTOMER_REPRESENTATIVE.name());
         return users.stream()

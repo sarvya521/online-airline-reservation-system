@@ -158,13 +158,44 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto updateBooking(BookingDto bookingDto) {
-        Long id = bookingDto.getId();
-        Booking booking = bookingRepository.findById(id).get();
-        bookingMapper.mergeToEntity(bookingDto, booking);
-        Flight flight = flightRepository.findById(bookingDto.getFlight().getId()).get();
-        booking.setFlight(flight);
-        User user = userRepository.findById(bookingDto.getUser().getId()).get();
-        booking.setUser(user);
+        Booking booking = bookingRepository.findById(bookingDto.getId()).get();
+        if(Objects.nonNull(bookingDto.getStatus()) && !Objects.equals(booking.getStatus(), bookingDto.getStatus())) {
+            booking.setStatus(bookingDto.getStatus());
+        } else {
+            Flight flight = flightRepository.findById(bookingDto.getFlight().getId()).get();
+            boolean isSeatAvailableInFlight =
+                    isSeatAvailableInFlight(flight, bookingDto.getSeatClass());
+            if (!isSeatAvailableInFlight) {
+                booking.setStatus(BookingStatus.WAITING.name());
+            } else {
+                booking.setStatus(BookingStatus.CONFIRMED.name());
+            }
+            booking.setFlight(flight);
+            booking.setSeatClass(bookingDto.getSeatClass());
+            booking.setAirline(flight.getAirline());
+            booking.setTravelDate(flight.getTravelDate());
+
+            if (Objects.equals(booking.getSeatClass(),
+                    SearchFlightConstants.SeatPreference.BUSINESS.name())) {
+                if (isSeatAvailableInFlight) {
+                    flight.setRemainingBusinessSeats(flight.getRemainingBusinessSeats() - 1); // decrease remaining seats
+                }
+                booking.setCost(flight.getBusinessClassFare());
+            } else if (Objects.equals(booking.getSeatClass(),
+                    SearchFlightConstants.SeatPreference.FIRST.name())) {
+                if (isSeatAvailableInFlight) {
+                    flight.setRemainingFirstclassSeats(flight.getRemainingFirstclassSeats() - 1); // decrease remaining
+                    // seats
+                }
+                booking.setCost(flight.getFirstclassFare());
+            } else if (Objects.equals(booking.getSeatClass(),
+                    SearchFlightConstants.SeatPreference.ECONOMY.name())) {
+                if (isSeatAvailableInFlight) {
+                    flight.setRemainingEconomySeats(flight.getRemainingEconomySeats() - 1); // decrease remaining seats
+                }
+                booking.setCost(flight.getEconomyClassFare());
+            }
+        }
         Booking bookingPersisted = transactionTemplate.execute(new TransactionCallback<Booking>() {
             @Override
             public Booking doInTransaction(TransactionStatus status) {

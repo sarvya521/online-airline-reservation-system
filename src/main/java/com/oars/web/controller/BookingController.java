@@ -2,6 +2,7 @@ package com.oars.web.controller;
 
 import com.oars.constant.BookingStatus;
 import com.oars.constant.Role;
+import com.oars.constant.SearchFlightConstants;
 import com.oars.dto.ActiveFlightDto;
 import com.oars.dto.AirlineRevenueDto;
 import com.oars.dto.AirportDto;
@@ -18,9 +19,9 @@ import com.oars.util.DateUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,6 +32,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Controller
@@ -119,6 +121,10 @@ public class BookingController {
             mav.addObject("message", "Please login first to book flight");
             return mav;
         }
+        String role = (String) request.getSession().getAttribute("role");
+        if (Objects.equals(Role.CUSTOMER_REPRESENTATIVE.name(), role)) {
+            userId = Long.parseLong(request.getParameter("userId"));
+        }
         Long flightId = Long.parseLong(request.getParameter("flight"));
         String seatPreference = (String) request.getSession().getAttribute("seatPreference");
         LocalDate travelDate = (LocalDate) request.getSession().getAttribute("travelDate");
@@ -154,14 +160,98 @@ public class BookingController {
         return mav;
     }
 
-    @PutMapping
+    @PostMapping("/edit")
     public ModelAndView updateBooking(HttpServletRequest request, HttpServletResponse res) {
-        log.info("airport updated successfully");
-        List<AirportDto> airports = airportService.getAllAirport();
-        ModelAndView mav = new ModelAndView("customerdashboard");
-        mav.addObject("sources", airports);
-        mav.addObject("destinations", airports);
-        mav.addObject("message", "flight booking updated successfully");
+        String role = (String) request.getSession().getAttribute("role");
+        if (!Objects.equals(Role.CUSTOMER_REPRESENTATIVE.name(), role)) {
+            ModelAndView mav = new ModelAndView("error");
+            mav.addObject("message", "Restricted Access. Or Your Session is expired. Try login again");
+            return mav;
+        }
+        Long bookingId = Long.parseLong(request.getParameter("bookingId"));
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setId(bookingId);
+
+        Long flightId = null;
+        String flightIdStr = request.getParameter("flight");
+        if(!StringUtils.isEmpty(flightIdStr)) {
+            flightId = Long.parseLong(flightIdStr);
+            FlightDto flight = new FlightDto();
+            flight.setId(flightId);
+            bookingDto.setFlight(flight);
+        }
+        SearchFlightConstants.SeatPreference seatClass = null;
+        String seatClassStr = request.getParameter("seatClass");
+        if(!StringUtils.isEmpty(seatClassStr)) {
+            seatClass = SearchFlightConstants.SeatPreference.valueOf(seatClassStr);
+            bookingDto.setSeatClass(seatClass.name());
+        }
+        BookingStatus status = null;
+        String statusStr = request.getParameter("status");
+        if(!StringUtils.isEmpty(statusStr)) {
+            status = BookingStatus.valueOf(statusStr);
+            bookingDto.setStatus(status.name());
+        }
+        bookingService.updateBooking(bookingDto);
+        return modifyCustomerBookings(request, res);
+    }
+
+    @RequestMapping(value = "/agent/modify", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView modifyCustomerBookings(HttpServletRequest request, HttpServletResponse res) {
+        String role = (String) request.getSession().getAttribute("role");
+        if (!Objects.equals(Role.CUSTOMER_REPRESENTATIVE.name(), role)) {
+            ModelAndView mav = new ModelAndView("error");
+            mav.addObject("message", "Restricted Access. Or Your Session is expired. Try login again");
+            return mav;
+        }
+
+        ModelAndView mav = new ModelAndView("modifycustomerbooking");
+        List<String> errors = new ArrayList<>();
+        List<UserDto> customers = userService.getAllCustomers();
+        if (customers.isEmpty()) {
+            errors.add("No customers found in the system");
+            mav.addObject("errors", errors);
+            return mav;
+        }
+        mav.addObject("customers", customers);
+        String customerIdStr = request.getParameter("customer");
+        if (StringUtils.isEmpty(customerIdStr)) {
+            return mav;
+        }
+        Long customerId = Long.parseLong(customerIdStr);
+        mav.addObject("selectedCustomer", customerId);
+
+        List<BookingDto> bookings = bookingService.getAllUpcomingBookingsForUser(customerId);
+        bookings =
+                bookings.stream()
+                        .filter(bookingDto -> !Objects.equals(BookingStatus.CANCELLED.name(), bookingDto.getStatus()))
+                        .collect(Collectors.toList());
+        if (bookings.isEmpty()) {
+            errors.add("No upcoming bookings found for this user");
+            mav.addObject("errors", errors);
+            return mav;
+        }
+        mav.addObject("bookings", bookings);
+
+        String bookingIdStr = request.getParameter("flightBookingId");
+        if(StringUtils.isEmpty(bookingIdStr)) {
+            return mav;
+        }
+        Long bookingId = Long.parseLong(bookingIdStr);
+        mav.addObject("selectedBooking", bookingId);
+
+        LocalDate travelDate = DateUtil.parseDate(request.getParameter("travelDate"));
+        SearchFlightConstants.SeatPreference seatPreference = SearchFlightConstants.SeatPreference.valueOf(request.getParameter("class"));
+        List<FlightDto> flights = flightService.search(bookingId, travelDate, seatPreference);
+        if (Objects.isNull(flights) || flights.isEmpty()) {
+            errors.add("No flights found for this search");
+            mav.addObject("errors", errors);
+            return mav;
+        }
+        mav.addObject("flights", flights);
+        mav.addObject("selectedTravelDate", travelDate);
+        mav.addObject("selectedSeatClass", seatPreference.name());
+
         return mav;
     }
 
