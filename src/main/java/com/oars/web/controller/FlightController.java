@@ -6,9 +6,11 @@ import com.oars.dto.AircraftDto;
 import com.oars.dto.AirportDto;
 import com.oars.dto.FlightDto;
 import com.oars.dto.SearchFlightDto;
+import com.oars.dto.UserDto;
 import com.oars.service.AircraftService;
 import com.oars.service.AirportService;
 import com.oars.service.FlightService;
+import com.oars.service.UserService;
 import com.oars.util.DateUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,9 @@ public class FlightController {
 
     @Autowired
     private AircraftService aircraftService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/crud")
     public ModelAndView crudFlight(HttpServletRequest request, HttpServletResponse res) {
@@ -280,6 +285,70 @@ public class FlightController {
         mav.addObject("selectedAirport", airportId);
         return mav;
     }
+
+    @PostMapping("/agent/search")
+    public ModelAndView searchFlightByAgent(HttpServletRequest request, HttpServletResponse res) {
+        String role = (String) request.getSession().getAttribute("role");
+        if (!Objects.equals(Role.CUSTOMER_REPRESENTATIVE.name(), role)) {
+            ModelAndView mav = new ModelAndView("error");
+            mav.addObject("message", "Restricted Access. Or Your Session is expired. Try login again");
+            return mav;
+        }
+        List<String> errors = new ArrayList<>();
+        ModelAndView mav = new ModelAndView("agentbooking");
+        List<UserDto> customers = userService.getAllCustomers();
+        if (customers.isEmpty()) {
+            errors.add("No customers found in the system");
+            mav.addObject("errors", errors);
+            return mav;
+        }
+        mav.addObject("customers", customers);
+        Long customerId = Long.parseLong(request.getParameter("customer"));
+        mav.addObject("selectedCustomer", customerId);
+        List<AirportDto> airports = airportService.getAllAirport();
+        mav.addObject("sources", airports);
+        mav.addObject("destinations", airports);
+
+        SearchFlightDto searchFlightDto = new SearchFlightDto();
+        String sortfilter = request.getParameter("sortfilter");
+        if (!StringUtils.isEmpty(sortfilter)) {
+            readSortFilterAttributes(request, errors, searchFlightDto);
+            readDataSession(request, errors, searchFlightDto);
+        } else {
+            readDataFromRequest(request, errors, searchFlightDto);
+        }
+        if (!errors.isEmpty()) {
+            mav.addObject("errors", errors);
+            return mav;
+        }
+
+        List<FlightDto> srcToDestFlights = flightService.search(searchFlightDto, false);
+
+        if (Objects.isNull(srcToDestFlights) || srcToDestFlights.isEmpty()) {
+            errors.add("No flights found for this search");
+            mav.addObject("errors", errors);
+            return mav;
+        }
+
+        mav.addObject("srcToDestFlights", srcToDestFlights);
+
+        List<Integer> sortedFares = flightService.getSortedFares(srcToDestFlights, searchFlightDto);
+        Integer lowestFlightCost = sortedFares.get(0);
+        Integer highestFlightCost = sortedFares.get(sortedFares.size() - 1);
+        mav.addObject("lowestFlightCost", lowestFlightCost);
+        mav.addObject("highestFlightCost", highestFlightCost);
+
+        mav.addObject("airlines", flightService.getAirlines(srcToDestFlights));
+        mav.addObject("seatPreference", (String) request.getSession().getAttribute("seatPreference"));
+        mav.addObject("sourceAirportId", (Long) request.getSession().getAttribute("sourceAirportId"));
+        mav.addObject("destinationAirportId", (Long) request.getSession().getAttribute("destinationAirportId"));
+        mav.addObject("travelDate", (LocalDate) request.getSession().getAttribute("travelDate"));
+        mav.addObject("sortBy", searchFlightDto.getSortBy());
+        mav.addObject("filterAirlines", String.join(",", searchFlightDto.getAirlines()));
+
+        return mav;
+    }
+
 
     @GetMapping("/search")
     public ModelAndView searchFlight(HttpServletRequest request, HttpServletResponse res) {

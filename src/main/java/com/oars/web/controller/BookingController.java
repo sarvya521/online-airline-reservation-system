@@ -123,7 +123,7 @@ public class BookingController {
         }
         String role = (String) request.getSession().getAttribute("role");
         if (Objects.equals(Role.CUSTOMER_REPRESENTATIVE.name(), role)) {
-            userId = Long.parseLong(request.getParameter("userId"));
+            userId = Long.parseLong(request.getParameter("customer"));
         }
         Long flightId = Long.parseLong(request.getParameter("flight"));
         String seatPreference = (String) request.getSession().getAttribute("seatPreference");
@@ -143,10 +143,15 @@ public class BookingController {
 
         bookingDto = bookingService.createBooking(bookingDto);
 
-        List<AirportDto> airports = airportService.getAllAirport();
-        ModelAndView mav = new ModelAndView("customerdashboard");
-        mav.addObject("sources", airports);
-        mav.addObject("destinations", airports);
+        ModelAndView mav = null;
+        if (Objects.equals(Role.CUSTOMER_REPRESENTATIVE.name(), role)) {
+            mav = makeReservationForCustomer(request, res);
+        } else {
+            mav = new ModelAndView("customerdashboard");
+            List<AirportDto> airports = airportService.getAllAirport();
+            mav.addObject("sources", airports);
+            mav.addObject("destinations", airports);
+        }
 
         if (Objects.equals(BookingStatus.WAITING.name(), bookingDto.getStatus())) {
             List<String> errors = new ArrayList<>();
@@ -252,6 +257,42 @@ public class BookingController {
         mav.addObject("selectedTravelDate", travelDate);
         mav.addObject("selectedSeatClass", seatPreference.name());
 
+        return mav;
+    }
+
+    @RequestMapping(value = "/agent/book", method = {RequestMethod.GET, RequestMethod.POST})
+    public ModelAndView makeReservationForCustomer(HttpServletRequest request, HttpServletResponse res) {
+        String role = (String) request.getSession().getAttribute("role");
+        if (!Objects.equals(Role.CUSTOMER_REPRESENTATIVE.name(), role)) {
+            ModelAndView mav = new ModelAndView("error");
+            mav.addObject("message", "Restricted Access. Or Your Session is expired. Try login again");
+            return mav;
+        }
+
+        request.getSession().removeAttribute("sourceAirportId");
+        request.getSession().removeAttribute("destinationAirportId");
+        request.getSession().removeAttribute("travelDate");
+        request.getSession().removeAttribute("returnDate");
+        request.getSession().removeAttribute("seatPreference");
+
+        ModelAndView mav = new ModelAndView("agentbooking");
+        List<String> errors = new ArrayList<>();
+        List<UserDto> customers = userService.getAllCustomers();
+        if (customers.isEmpty()) {
+            errors.add("No customers found in the system");
+            mav.addObject("errors", errors);
+            return mav;
+        }
+        mav.addObject("customers", customers);
+
+        String customerIdStr = request.getParameter("customer");
+        if(!StringUtils.isEmpty(customerIdStr)) {
+            Long customerId = Long.parseLong(customerIdStr);
+            mav.addObject("selectedCustomer", customerId);
+        }
+        List<AirportDto> airports = airportService.getAllAirport();
+        mav.addObject("sources", airports);
+        mav.addObject("destinations", airports);
         return mav;
     }
 
