@@ -350,7 +350,7 @@ public class FlightController {
     }
 
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ModelAndView searchFlight(HttpServletRequest request, HttpServletResponse res) {
         ModelAndView mav = new ModelAndView("customerdashboard");
         List<AirportDto> airports = airportService.getAllAirport();
