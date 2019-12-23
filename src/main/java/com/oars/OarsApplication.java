@@ -3,6 +3,7 @@ package com.oars;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -11,7 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EntityScan("com.oars.entity")
 @EnableJpaRepositories("com.oars.dao")
 @EnableTransactionManagement
-public class OarsApplication {
+public class OarsApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(OarsApplication.class, args);
     }
