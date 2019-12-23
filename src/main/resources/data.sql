@@ -1,3 +1,8 @@
+INSERT INTO app_user(email, password, f_name, l_name, role)
+SELECT 'bruce_wayne@batman.com', 'martha', 'bruce', 'wayne', 'ADMIN'
+FROM app_user
+WHERE (SELECT COUNT(1) FROM app_user WHERE email = 'bruce_wayne@batman.com') != 1;
+
 --INSERT INTO app_user(email, password, f_name, l_name, role)
 --VALUES ('bruce_wayne@batman.com', 'martha', 'bruce', 'wayne', 'ADMIN')
 --
