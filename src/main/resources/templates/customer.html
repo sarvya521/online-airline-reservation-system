@@ -18,7 +18,6 @@
 		font-family: 'Open Sans', sans-serif;
 	}
 	.table-wrapper {
-		width: 700px;
 		margin: 30px auto;
         background: #fff;
         padding: 20px;
@@ -95,8 +94,6 @@
 	table.table td .add {
 		display: none;
 	}
-
-
     </style>
     <script type="text/javascript">
 $(document).ready(function(){
@@ -115,8 +112,8 @@ $(document).ready(function(){
             '<td><input type="text" class="form-control" name="lastName" id="lastName"></td>' +
 			'<td><a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
         '</tr>';
-    	$("table").append(row);
-		$("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+    	$('table > tbody > tr:first').before(row);
+		$("table tbody tr").eq(0).find(".add, .edit").toggle();
         $('[data-toggle="tooltip"]').tooltip();
     });
 	// Add row on add button click
@@ -177,15 +174,13 @@ $(document).ready(function(){
 	    $(this).parents("tr").find("input").each(function(){
 		    if($(this).prop("name") == "customerId") {
                 $("#userId").val($(this).val());
+		        $("#deleteUser").submit();
             }
 		});
-		$("#deleteUser").submit();
         $(this).parents("tr").remove();
 		$(".add-new").removeAttr("disabled");
     });
 });
-
-
     </script>
 </head>
 <body>
