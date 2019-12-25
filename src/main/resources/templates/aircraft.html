@@ -94,8 +94,6 @@
 	table.table td .add {
 		display: none;
 	}
-
-
     </style>
     <script type="text/javascript">
 $(document).ready(function(){
@@ -116,7 +114,11 @@ $(document).ready(function(){
             '<td><input type="text" class="form-control" name="totalEconomySeats" id="totalEconomySeats"></td>' +
 			'<td><a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
         '</tr>';
-    	$('table > tbody > tr:first').before(row);
+    	if($("table tbody").find("tr").length == 0) {
+            $('table > tbody').append(row);
+        } else {
+    	    $('table > tbody > tr:first').before(row);
+    	}
 		$("table tbody tr").eq(0).find(".add, .edit").toggle();
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -196,8 +198,6 @@ $(document).ready(function(){
 		$(".add-new").removeAttr("disabled");
     });
 });
-
-
     </script>
 </head>
 <body>
@@ -272,7 +272,7 @@ $(document).ready(function(){
                 <th>Actions</th>
             </tr>
             </thead>
-            <tbody th:if="${aircrafts!=null and !aircrafts.isEmpty()}">
+            <tbody>
             <tr th:each="aircraft : ${aircrafts}">
                 <input type="hidden" name="aircraftId" th:value="${aircraft.id}"/>
                 <td th:text="${aircraft.code}" param="code"></td>

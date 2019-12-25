@@ -153,7 +153,11 @@ $(document).ready(function(){
 			'<td>' + aircraftSelectHtml + '</td>' +
 			'<td><a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
         '</tr>';
-        $('table > tbody > tr:first').before(row);
+        if($("table tbody").find("tr").length == 0) {
+            $('table > tbody').append(row);
+        } else {
+    	    $('table > tbody > tr:first').before(row);
+    	}
         $("table tbody tr").eq(0).find(".add, .edit").toggle();
         $('[data-toggle="tooltip"]').tooltip();
         $( "#travelDateSelector" ).datepicker({
@@ -435,7 +439,7 @@ $(document).ready(function(){
                 <th>Actions</th>
             </tr>
             </thead>
-            <tbody th:if="${flights!=null and !flights.isEmpty()}">
+            <tbody>
             <tr th:each="flight : ${flights}">
                 <input type="hidden" name="flightId" th:value="${flight.id}"/>
 

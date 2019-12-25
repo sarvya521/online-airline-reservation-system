@@ -111,7 +111,11 @@ $(document).ready(function(){
             '<td><input type="text" class="form-control" name="alias" id="alias"></td>' +
 			'<td><a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
         '</tr>';
-    	$('table > tbody > tr:first').before(row);
+    	if($("table tbody").find("tr").length == 0) {
+            $('table > tbody').append(row);
+        } else {
+    	    $('table > tbody > tr:first').before(row);
+    	}
 		$("table tbody tr").eq(0).find(".add, .edit").toggle();
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -241,7 +245,7 @@ $(document).ready(function(){
                 <th>Actions</th>
             </tr>
             </thead>
-            <tbody th:if="${airports!=null and !airports.isEmpty()}">
+            <tbody>
             <tr th:each="airport : ${airports}">
                 <input type="hidden" name="airportId" th:value="${airport.id}"/>
                 <td th:text="${airport.name}" param="name"></td>

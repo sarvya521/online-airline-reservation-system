@@ -112,7 +112,11 @@ $(document).ready(function(){
             '<td><input type="text" class="form-control" name="lastName" id="lastName"></td>' +
 			'<td><a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
         '</tr>';
-    	$('table > tbody > tr:first').before(row);
+    	if($("table tbody").find("tr").length == 0) {
+            $('table > tbody').append(row);
+        } else {
+    	    $('table > tbody > tr:first').before(row);
+    	}
 		$("table tbody tr").eq(0).find(".add, .edit").toggle();
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -256,7 +260,7 @@ $(document).ready(function(){
                 <th>Actions</th>
             </tr>
             </thead>
-            <tbody th:if="${customers!=null and !customers.isEmpty()}">
+            <tbody>
             <tr th:each="customer : ${customers}">
                 <input type="hidden" name="customerId" th:value="${customer.id}"/>
                 <td th:text="${customer.email}" param="email"></td>

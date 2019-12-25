@@ -112,7 +112,13 @@ $(document).ready(function(){
             '<td><input type="text" class="form-control" name="lastName" id="lastName"></td>' +
 			'<td>'+actions+'</td>' +
         '</tr>';
-    	$('table > tbody > tr:first').before(row);
+
+    	if($("table tbody").find("tr").length == 0) {
+            $('table > tbody').append(row);
+        } else {
+    	    $('table > tbody > tr:first').before(row);
+    	}
+
 		$("table tbody tr").eq(0).find(".add, .edit").toggle();
         $('[data-toggle="tooltip"]').tooltip();
     });
@@ -256,7 +262,7 @@ $(document).ready(function(){
                 <th>Actions</th>
             </tr>
             </thead>
-            <tbody th:if="${agents!=null and !agents.isEmpty()}">
+            <tbody>
             <tr th:each="agent : ${agents}">
                 <input type="hidden" name="agentId" th:value="${agent.id}"/>
                 <td th:text="${agent.email}" param="email"></td>
